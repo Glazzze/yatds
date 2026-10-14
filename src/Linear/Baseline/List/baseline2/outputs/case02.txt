@@ -1,0 +1,8 @@
+0
+EMPTY
+true
+5
+ERROR
+1
+0
+EMPTY
