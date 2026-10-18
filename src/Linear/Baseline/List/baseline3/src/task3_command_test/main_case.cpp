@@ -169,6 +169,14 @@ static std::vector<std::string> list_case_files(const std::string &dir)
 
 int main(int argc, char *argv[])
 {
+    // 用法提示：./test -h 或 --help
+    if (argc > 1 && (std::string(argv[1]) == "-h" || std::string(argv[1]) == "--help")) {
+        std::cout << "用法:\n"
+                  << "  ./test                    自动遍历 inputs/ 与 outputs/，逐用例比对并输出 PASS/FAIL\n"
+                  << "  ./test inputs/case01.txt  单用例模式：打印该样例的程序输出，便于调试\n";
+        return 0;
+    }
+
     // 单用例模式：直接打印输出，便于调试
     if (argc > 1) {
         std::ifstream fin(argv[1]);

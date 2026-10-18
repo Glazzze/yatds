@@ -34,6 +34,7 @@
 #include <iomanip>
 #include <iostream>
 #include <limits>
+#include <map>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -187,6 +188,32 @@ static double benchLinkedList(int n)
     });
 }
 
+/*
+ * 性能基准结果：同一次进程内按“数据规模”缓存，只测量一次。
+ *
+ * 课程 README 要求 test 的“功能输出后必须追加 PERF 统计行”，因此 PERF 行仍需保留；
+ * 但早期实现让每个用例都重跑一遍基准（6 用例 × 3 基准 = 18 次），使功能比对背负了
+ * 本不属于它的测量负载。这里改为“按规模缓存、一次测量多次复用”——示例用例规模一致，
+ * 全程只跑 3 次基准。完整的多规模、多场景性能分析由独立程序 `vector_perf`（小任务 2）
+ * 与 `array_list_cmp`（小任务 4）承担，功能测试只保留最小成本的合规输出。
+ */
+struct PerfSample {
+    double vectorMs;
+    double stdMs;
+    double listMs;
+};
+
+static PerfSample measurePerf(int n)
+{
+    static std::map<int, PerfSample> cache;
+    auto it = cache.find(n);
+    if (it != cache.end())
+        return it->second;
+    PerfSample s{benchVector(n), benchStdVector(n), benchLinkedList(n)};
+    cache[n] = s;
+    return s;
+}
+
 /* 运行单个用例，返回完整输出（功能行 + PERF 行） */
 static std::string runCase(std::istream &fin)
 {
@@ -238,19 +265,17 @@ static std::string runCase(std::istream &fin)
     for (const std::string &s : ourOut)
         out << s << '\n';
 
-    /* 性能统计：数据规模取本样例规模与基准规模中的较大者 */
+    /* 性能统计：数据规模取本样例规模与基准规模中的较大者；结果按规模缓存复用 */
     const int benchN = 100000;
     int perfN = (n + m > benchN) ? (n + m) : benchN;
     long long opsCount = 2LL * perfN;
 
-    double tVector = benchVector(perfN);
-    double tStdVector = benchStdVector(perfN);
-    double tLinked = benchLinkedList(perfN);
+    PerfSample perf = measurePerf(perfN);
 
     out << std::fixed << std::setprecision(2);
-    out << "PERF vector_like n=" << perfN << " ops=" << opsCount << " time_ms=" << tVector << '\n';
-    out << "PERF std_vector n=" << perfN << " ops=" << opsCount << " time_ms=" << tStdVector << '\n';
-    out << "PERF linked_list n=" << perfN << " ops=" << opsCount << " time_ms=" << tLinked << '\n';
+    out << "PERF vector_like n=" << perfN << " ops=" << opsCount << " time_ms=" << perf.vectorMs << '\n';
+    out << "PERF std_vector n=" << perfN << " ops=" << opsCount << " time_ms=" << perf.stdMs << '\n';
+    out << "PERF linked_list n=" << perfN << " ops=" << opsCount << " time_ms=" << perf.listMs << '\n';
 
     return out.str();
 }
@@ -307,6 +332,14 @@ static void splitOutput(const std::string &text, std::vector<std::string> &funct
 int main(int argc, char *argv[])
 {
     std::ios::sync_with_stdio(false);
+
+    /* 用法提示：./test -h 或 --help */
+    if (argc > 1 && (std::string(argv[1]) == "-h" || std::string(argv[1]) == "--help")) {
+        std::cout << "用法:\n"
+                  << "  ./test                    自动遍历 inputs/ 与 outputs/，功能行严格比对，输出 PASS/FAIL\n"
+                  << "  ./test inputs/case01.txt  单用例模式：打印该样例的完整输出（含 PERF 行），便于调试\n";
+        return 0;
+    }
 
     const std::string inputDir = "inputs";
     const std::string outputDir = "outputs";

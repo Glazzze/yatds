@@ -64,7 +64,7 @@ int main()
     check("access(0) 是头节点", access(n0, 0) == n0);
     check("access(4) 是尾节点", access(n0, 4) == n4);
     check("access(5) 越界返回 nullptr", access(n0, 5) == nullptr);
-    check("access(-1) 直接返回头节点（与教程实现一致）", access(n0, -1) == n0);
+    check("access(-1) 负下标按越界返回 nullptr（与外壳层 ERROR 语义一致）", access(n0, -1) == nullptr);
 
     /* ---------- 5. 查找 ---------- */
     std::cout << "== 5. 查找节点 ==\n";

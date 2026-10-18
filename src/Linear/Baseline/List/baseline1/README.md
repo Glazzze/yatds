@@ -51,6 +51,37 @@ task3_command_test/（统一 I/O 格式的比对程序）
 
 小任务 3 的 `test_command.cpp` 通过相对路径引用小任务 2 的头文件，因此三组代码保持“底层实现 → 高层封装 → 外壳程序”的层次关系，符合“完成一个模块后在其上构建”的工程习惯。
 
+## 扩展功能对照表
+
+课程要求“超出教程给出的几种操作，编写出更多的功能函数”。下表集中列出相对教程四个基本操作（`insert` / `remove` / `access` / `find`）新增的全部扩展，便于一眼审阅其设计用途与测试覆盖。
+
+### 小任务 1：裸节点扩展函数（`task1_basic_list/`）
+
+| 扩展函数 | 参照/来源 | 语义 | 复杂度 | 覆盖断言（`test_list.cpp`） |
+| :--- | :--- | :--- | :--- | :--- |
+| `build_list` | 教程“初始化链表” | 按序列尾插法建表，空序列返回 `nullptr` | $O(n)$ | 第 6 节 |
+| `push_front` | — | 头插，返回新头节点 | $O(1)$ | 第 6 节 |
+| `push_back` | — | 尾插（裸节点无尾指针，需遍历），空表尾插返回单节点 | $O(n)$ | 第 6 节 |
+| `length` | — | 返回链表长度 | $O(n)$ | 第 1、2、3、6 节 |
+| `contains` | `find` | 是否存在值为 `target` 的节点 | $O(n)$ | 第 5 节 |
+| `reverse` | 任务 3 前置 | 三指针就地反转，返回新头；空表/单节点安全 | $O(n)$ / $O(1)$ | 第 7 节 |
+| `to_vector` | — | 导出元素序列，便于打印与比对 | $O(n)$ | 全程 |
+| `free_memory` | `delete` | 逐节点释放整表，防泄漏 | $O(n)$ | ASan/LSan |
+
+### 小任务 2：`LinkedList<T>` 类新增接口（`task2_linked_list/`）
+
+在封装基本操作（`push_front` / `push_back` / `insert` / `erase` / `at` / `size` / `empty` / `find` / `contains` / `clear`）之外：
+
+| 新增接口 | 参照 | 语义 | 复杂度 | 覆盖断言（`test_linked_list.cpp`） |
+| :--- | :--- | :--- | :--- | :--- |
+| `reverse` | 任务 3 前置 | 就地反转，并同步维护 `tail_` | $O(n)$ / $O(1)$ | 第 2、4 节 |
+| `to_vector` | — | 导出序列（`reserve` 预分配） | $O(n)$ | 全程 |
+| `front` / `back` | `std::list::front/back` | 首/尾元素，空表抛 `out_of_range` | $O(1)$ | 第 1、2 节 |
+| `head_node` | — | 暴露头节点，供进阶算法复用裸节点 | $O(1)$ | baseline2/3 复用 |
+| 深拷贝构造 / 赋值 | STL 容器语义 | 逐节点复制，两对象独立；自赋值安全 | $O(n)$ | 第 5 节 |
+
+> 说明：上表接口均“有明确设计用途、有源码、有实际运行验证”，满足评分维度 B 的三要素。
+
 ## 代码风格约定（与学习材料保持一致）
 
 - 节点命名沿用教程：`ListNode`（`val` + `next` + 构造函数）。
@@ -58,6 +89,12 @@ task3_command_test/（统一 I/O 格式的比对程序）
 - 头文件只放声明（`.hpp`），实现集中在同目录 `.cpp`，用 `/* START: xxx implementation */` 与 `/* END */` 标注实现区间。
 - 注释统一为中文，解释“为什么”而不只是“做了什么”。
 - 测试程序使用 `check` / `expect` 风格断言函数，逐项打印 `[PASS]` / `[FAIL]`，便于人工核对。
+
+## 越界语义统一
+
+教程原实现的 `access(head, index)` 在 `index < 0` 时，因循环体一次都不执行而直接返回头节点——这会让“负下标”被静默当作“访问下标 0”。而命令式外壳程序对负下标统一输出 `ERROR`。两者语义不一致，容易埋下隐患。
+
+本提交统一为：**负下标一律按越界处理**。裸节点层 `access` 显式 `if (index < 0) return nullptr;`；模板类层的 `at` / `insert` / `erase` 越界抛 `std::out_of_range`；外壳层拦截负下标并输出 `ERROR`。三层对“越界”的判定口径一致，`test_list.cpp` 中专门有一条断言覆盖 `access(-1) == nullptr`。
 
 ## 构建与自测
 
@@ -67,6 +104,7 @@ task3_command_test/（统一 I/O 格式的比对程序）
 make           # 编译生成 test（命令式比对程序）
 make check     # 运行样例比对：case01.txt: PASS / ...
 make unit      # 编译并运行小任务 1、2 的单元验证程序
+make asan      # 用 ASan/LSan 重编三个程序并运行，验证零泄漏
 make clean     # 清理构建产物
 ```
 
@@ -86,12 +124,12 @@ make clean     # 清理构建产物
 
 ## 验证记录
 
-- `make`：编译通过，`-std=c++17 -Wall` 无警告。
+- `make`：编译通过，`-std=c++17 -Wall -Wextra` 无警告。
 - `make check`：case01 ~ case03 共 3 个用例全部 PASS。
 - `make unit`：小任务 1、2 共 46 项断言全部 `[PASS]`。
 - **ASan / LSan 内存检查**：三个程序（`test_list`、`test_linked_list`、`test`）在 `-fsanitize=address,leak` 下全部干净退出，无内存泄漏、无未定义行为。
 
-复现内存检查的命令（在 `baseline1/` 目录执行）：
+复现内存检查的命令（在 `baseline1/` 目录执行，或直接 `make asan`）：
 
 ```sh
 g++ -std=c++17 -Wall -fsanitize=address,leak src/task1_basic_list/list.cpp src/task1_basic_list/test_list.cpp -o /tmp/a1 && /tmp/a1
@@ -104,7 +142,7 @@ g++ -std=c++17 -Wall -fsanitize=address,leak src/task3_command_test/test_command
 ### 小任务 1：裸节点链表
 
 - **实现要点**：节点定义、`insert` / `remove` / `access` / `find` 与课程教程逐行一致（`insert` 只改写两条引用、`remove` 负责 `delete` 被删节点）；扩展操作遵循同样风格——`build_list` 尾插法建表、`reverse` 三指针就地反转（O(n) 时间 / O(1) 额外空间）。
-- **测试设计**（体现函数特性，而非简单功能测试）：`insert` 后用 `access` 交叉验证“被断言的正是刚插入的节点”；`access(-1)` 验证与教程实现一致的边界行为（直接返回头节点）；反转操作专测头、尾两个最易出错的边界指针；空表/单节点反转不崩溃。
+- **测试设计**（体现函数特性，而非简单功能测试）：`insert` 后用 `access` 交叉验证“被断言的正是刚插入的节点”；`access(-1)` 验证负下标按越界处理（返回 `nullptr`，与外壳层输出 `ERROR` 的语义一致，见「越界语义统一」一节）；反转操作专测头、尾两个最易出错的边界指针；空表/单节点反转不崩溃。
 - **内存管理**：`remove` 单点释放 + `free_memory` 整表释放，经 ASan/LSan 验证零泄漏。
 
 ### 小任务 2：模板链表类

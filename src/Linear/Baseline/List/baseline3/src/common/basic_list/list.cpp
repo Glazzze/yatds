@@ -26,6 +26,11 @@ void dsaac::remove(ListNode *n0)
 /* 访问链表中索引为 index 的节点 */
 ListNode *dsaac::access(ListNode *head, int index)
 {
+    // 负下标一律视为越界，返回 nullptr。
+    // 教程原实现对 index < 0 会因循环体不执行而直接返回头节点，
+    // 与外壳程序“负下标输出 ERROR”的语义不一致；此处显式拦截以统一行为。
+    if (index < 0)
+        return nullptr;
     for (int i = 0; i < index; i++) {
         if (head == nullptr)
             return nullptr;

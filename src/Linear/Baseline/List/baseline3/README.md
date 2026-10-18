@@ -73,7 +73,7 @@ make clean      # 清理构建产物
 
 ## 验证记录
 
-- `make`：`test` 与 `manual` 编译通过，`-std=c++17 -Wall` 无警告。
+- `make`：`test` 与 `manual` 编译通过，`-std=c++17 -Wall -Wextra` 无警告。
 - `make check`：case01 ~ case08 共 8 个用例全部 PASS，其中 case01 与课程 README 官方样例逐行一致。
 - `make unit`：手动构造测试 6 项断言全部 `[PASS]`。
 - `make asan`：`test` 与 `manual` 在 `-fsanitize=address,leak` 下均干净退出、无泄漏报告——重点验证了 case07（两前缀皆空、共享尾部）与 case03（自环）这两类最易双重释放/死循环的场景。

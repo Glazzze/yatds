@@ -1,5 +1,5 @@
 CXX      = g++
-CXXFLAGS = -std=c++17 -Wall
+CXXFLAGS = -std=c++17 -Wall -Wextra
 
 SRC      = src
 
@@ -35,7 +35,20 @@ unit2: $(SRC)/task2_linked_list/linked_list.cpp $(SRC)/task2_linked_list/test_li
 check: $(TEST_TARGET)
 	./$(TEST_TARGET)
 
-clean:
-	rm -f $(TEST_TARGET) $(UNIT1) $(UNIT2)
+# 内存检查：用 ASan/LSan 重编三个程序并运行，验证零泄漏 / 无未定义行为
+# （在本目录执行，故 test 能读到 inputs/；单元程序输出到 /tmp 避免污染提交目录）
+ASAN1 = /tmp/b1_asan_basic
+ASAN2 = /tmp/b1_asan_linked
+ASAN3 = /tmp/b1_asan_test
+asan:
+	$(CXX) $(CXXFLAGS) -fsanitize=address,leak $(SRC)/task1_basic_list/list.cpp $(SRC)/task1_basic_list/test_list.cpp -o $(ASAN1)
+	$(CXX) $(CXXFLAGS) -fsanitize=address,leak $(SRC)/task2_linked_list/linked_list.cpp $(SRC)/task2_linked_list/test_linked_list.cpp -o $(ASAN2)
+	$(CXX) $(CXXFLAGS) -fsanitize=address,leak $(TEST_SRCS) -o $(ASAN3)
+	$(ASAN1)
+	$(ASAN2)
+	$(ASAN3)
 
-.PHONY: all unit unit1 unit2 check clean
+clean:
+	rm -f $(TEST_TARGET) $(UNIT1) $(UNIT2) $(ASAN1) $(ASAN2) $(ASAN3)
+
+.PHONY: all unit unit1 unit2 check asan clean

@@ -20,7 +20,7 @@ void insert(ListNode *n0, ListNode *P);
 /* 删除链表的节点 n0 之后的首个节点（O(1)，负责释放被删节点内存） */
 void remove(ListNode *n0);
 
-/* 访问链表中索引为 index 的节点（O(n)，从头顺序遍历，越界返回 nullptr） */
+/* 访问链表中索引为 index 的节点（O(n)，从头顺序遍历；index 越界或为负返回 nullptr） */
 ListNode *access(ListNode *head, int index);
 
 /* 在链表中查找值为 target 的首个节点（O(n)，返回下标，不存在返回 -1） */

@@ -8,22 +8,31 @@
  *   3. traverse ：建表后顺序遍历 n 次（都可 O(n)，考察缓存局部性）
  *   4. random   ：建表后随机访问 k 次（可变数组 O(1)，链表 O(n)）
  *
- * 每项重复 REPEAT 次取平均，输出 PERF 统计行。
+ * 每项重复 REPEAT 次，报告均值与总体标准差，并做 Welch 两样本 t 检验（STAT 行），
+ * 输出 PERF 统计行。
  */
 
 /* 复用 小任务 1 的可变数组实现与链表实现（相对路径） */
 #include "../task1_vector/vector.hpp"
 #include "../common/linked_list/linked_list.hpp"
+#include "../common/stats/stats.hpp"
 
 #include <chrono>
+#include <cmath>
 #include <cstddef>
 #include <iomanip>
 #include <iostream>
 #include <string>
 #include <vector>
 
-/* 每项测试重复执行的次数（取平均以降低计时抖动） */
-static const int REPEAT = 5;
+/* 每项测试重复执行的次数（取均值与标准差，报告统计离散度） */
+static const int REPEAT = 24;
+
+/* 一次场景的统计结果：均值与总体标准差（毫秒） */
+struct Stat {
+    double mean;
+    double sd;
+};
 
 /* 以毫秒为单位返回执行 fn 一次的耗时 */
 template <typename Fn>
@@ -136,26 +145,33 @@ static double listRandom(int n, int k)
     });
 }
 
-/* 对某场景重复 REPEAT 次取平均 */
+/* 对某场景重复 REPEAT 次，返回原始计时样本（毫秒） */
 template <typename Fn>
-static double avg(Fn &&fn)
+static std::vector<double> samplesOf(Fn &&fn)
 {
-    double total = 0.0;
+    std::vector<double> samples;
+    samples.reserve(REPEAT);
     for (int r = 0; r < REPEAT; r++)
-        total += fn();
-    return total / REPEAT;
+        samples.push_back(fn());
+    return samples;
+}
+
+/* 由原始样本得到均值与总体标准差 */
+static Stat summarize(const std::vector<double> &samples)
+{
+    return Stat{dsaac::mean(samples), dsaac::sdPop(samples)};
 }
 
 int main()
 {
     std::ios::sync_with_stdio(false);
 
-    /* 保存每次测量结果，供汇总比值复用（避免二次运行引入计时噪声） */
+    /* 保存每次测量结果（原始样本），供汇总比值与显著性检验复用 */
     struct Row {
         std::string scenario;
         int scale;
-        double vecMs;
-        double listMs;
+        std::vector<double> vec;
+        std::vector<double> list;
     };
     std::vector<Row> rows;
 
@@ -164,47 +180,70 @@ int main()
         int prependM = n / 100;
         int randomK = 2000;
         std::cout << "# 数据规模 n=" << n << "（头部插入 m=" << prependM
-                  << "，随机访问 k=" << randomK << "），每项重复 " << REPEAT << " 次取平均\n";
+                  << "，随机访问 k=" << randomK << "），每项重复 " << REPEAT
+                  << " 次，报告均值与标准差\n";
 
-        double aVec = avg([n] { return vecAppend(n); });
-        double aList = avg([n] { return listAppend(n); });
+        std::vector<double> aVec = samplesOf([n] { return vecAppend(n); });
+        std::vector<double> aList = samplesOf([n] { return listAppend(n); });
+        Stat aV = summarize(aVec), aL = summarize(aList);
         rows.push_back({"append", n, aVec, aList});
         std::cout << "PERF vector_like_append n=" << n << " ops=" << n
-                  << " time_ms=" << std::fixed << std::setprecision(3) << aVec << '\n';
+                  << " time_ms=" << std::fixed << std::setprecision(3) << aV.mean
+                  << " sd=" << aV.sd << '\n';
         std::cout << "PERF linked_list_append n=" << n << " ops=" << n
-                  << " time_ms=" << aList << '\n';
+                  << " time_ms=" << aL.mean << " sd=" << aL.sd << '\n';
 
-        double pVec = avg([prependM] { return vecPrepend(prependM); });
-        double pList = avg([prependM] { return listPrepend(prependM); });
+        std::vector<double> pVec = samplesOf([prependM] { return vecPrepend(prependM); });
+        std::vector<double> pList = samplesOf([prependM] { return listPrepend(prependM); });
+        Stat pV = summarize(pVec), pL = summarize(pList);
         rows.push_back({"prepend", prependM, pVec, pList});
         std::cout << "PERF vector_like_prepend n=" << prependM << " ops=" << prependM
-                  << " time_ms=" << pVec << '\n';
+                  << " time_ms=" << pV.mean << " sd=" << pV.sd << '\n';
         std::cout << "PERF linked_list_prepend n=" << prependM << " ops=" << prependM
-                  << " time_ms=" << pList << '\n';
+                  << " time_ms=" << pL.mean << " sd=" << pL.sd << '\n';
 
-        double tVec = avg([n] { return vecTraverse(n); });
-        double tList = avg([n] { return listTraverse(n); });
+        std::vector<double> tVec = samplesOf([n] { return vecTraverse(n); });
+        std::vector<double> tList = samplesOf([n] { return listTraverse(n); });
+        Stat tV = summarize(tVec), tL = summarize(tList);
         rows.push_back({"traverse", n, tVec, tList});
         std::cout << "PERF vector_like_traverse n=" << n << " ops=" << 2 * n
-                  << " time_ms=" << tVec << '\n';
+                  << " time_ms=" << tV.mean << " sd=" << tV.sd << '\n';
         std::cout << "PERF linked_list_traverse n=" << n << " ops=" << 2 * n
-                  << " time_ms=" << tList << '\n';
+                  << " time_ms=" << tL.mean << " sd=" << tL.sd << '\n';
 
-        double rVec = avg([n, randomK] { return vecRandom(n, randomK); });
-        double rList = avg([n, randomK] { return listRandom(n, randomK); });
+        std::vector<double> rVec = samplesOf([n, randomK] { return vecRandom(n, randomK); });
+        std::vector<double> rList = samplesOf([n, randomK] { return listRandom(n, randomK); });
+        Stat rV = summarize(rVec), rL = summarize(rList);
         rows.push_back({"random", randomK, rVec, rList});
         std::cout << "PERF vector_like_random n=" << n << " ops=" << (n + randomK)
-                  << " time_ms=" << rVec << '\n';
+                  << " time_ms=" << rV.mean << " sd=" << rV.sd << '\n';
         std::cout << "PERF linked_list_random n=" << n << " ops=" << (n + randomK)
-                  << " time_ms=" << rList << '\n';
+                  << " time_ms=" << rL.mean << " sd=" << rL.sd << '\n';
         std::cout << '\n';
     }
 
     std::cout << "# 汇总：time_ms 比值 = 链表耗时 / 可变数组耗时（>1 表示链表更慢）\n";
     for (const Row &r : rows) {
+        double mv = dsaac::mean(r.vec), ml = dsaac::mean(r.list);
         std::cout << "PERF ratio_" << r.scenario << " n=" << r.scale
                   << " time_ms=" << std::fixed << std::setprecision(3)
-                  << (r.vecMs > 0 ? r.listMs / r.vecMs : 0.0) << '\n';
+                  << (mv > 0 ? ml / mv : 0.0) << '\n';
+    }
+
+    /* 统计显著性：Welch 两样本 t 检验（H0：链表与可变数组均值相等）+ 均值差的 95% 置信区间 */
+    std::cout << "# 统计显著性：Welch 两样本 t 检验（H0：链表与可变数组均值相等）；\n";
+    std::cout << "# diff95 为均值差 (list - vec) 的 95% 置信区间；p<0.05 表示差异显著\n";
+    for (const Row &r : rows) {
+        dsaac::WelchResult w = dsaac::welch(r.list, r.vec);
+        double mv = dsaac::mean(r.vec), ml = dsaac::mean(r.list);
+        std::cout << "STAT " << r.scenario << " n=" << r.scale
+                  << std::fixed << std::setprecision(3)
+                  << " vec_ms=" << mv << " list_ms=" << ml
+                  << " ratio=" << (mv > 0 ? ml / mv : 0.0)
+                  << " t=" << w.t << " df=" << w.df;
+        std::cout << std::defaultfloat << std::setprecision(2) << " p=" << w.p;
+        std::cout << std::fixed << std::setprecision(3)
+                  << " diff95=[" << w.ciLow << "," << w.ciHigh << "]\n";
     }
     return 0;
 }

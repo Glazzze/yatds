@@ -1,5 +1,5 @@
 CXX      = g++
-CXXFLAGS = -std=c++17 -Wall
+CXXFLAGS = -std=c++17 -Wall -Wextra
 
 SRC      = src
 LIST     = $(SRC)/common/basic_list/list.cpp

@@ -1,13 +1,13 @@
 # 小任务 1：可变数组的基本实现
 
-`vector.hpp` 声明并导出模板可变数组 `dsaac::Vector<T>`；`vector.cpp` 提供完整实现（含显式实例化）；`main_basic.cpp` 为命令式测试程序（编译为 `test`）。
+`vector.hpp` 为 **header-only**：声明并完整实现模板可变数组 `dsaac::Vector<T>`（实现放头文件，使 `push_back`/`operator[]` 等热路径可被 `-O2` 跨编译单元内联）；`main_basic.cpp` 为命令式测试程序（编译为 `test`）。
 
 ## 需要完成的内容
 
 - 连续内存存储，维护 `size` / `capacity` 双计数，容量不足时按 **2 倍**策略自动扩容。
 - 基本操作：`push_back`、`insert`、`erase`、`at`、`size`、`capacity`、`empty`、`clear`。
 - 扩展操作：`operator[]`、`front`、`back`、`reserve`、`to_vector`。
-- RAII 内存管理：构造 / 拷贝构造 / 拷贝赋值 / 析构统一管理连续内存。
+- RAII 内存管理：构造 / 拷贝构造 / 拷贝赋值 / 析构统一管理连续内存（`::operator new` 原始内存 + placement new 就地构造 / 显式析构）。
 - 测试程序按课程 README 规定的输入格式读 `inputs/` 样例、执行操作序列，并与 `outputs/` 标准输出逐用例比对。
 
 ## 行为要求

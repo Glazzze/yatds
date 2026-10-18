@@ -8,22 +8,31 @@
  *   4. insert_front  ：头部插入 m 次（每次 O(n) 搬移，考察最坏情况）
  *   5. erase_front   ：头部删除 m 次（同上）
  *
- * 每项测试重复 REPEAT 次取平均以降低抖动，输出 PERF 统计行
- * （含数据规模、操作次数、平均运行时间 time_ms）。
+ * 每项测试重复 REPEAT 次，报告**均值与总体标准差**以体现计时离散度，
+ * 输出 PERF 统计行（含数据规模、操作次数、平均运行时间 time_ms 与标准差 sd）；
+ * 另输出：复杂度增长实测（growth 行）与 Welch 两样本 t 检验（STAT 行，含 95% 置信区间）。
  */
 
 /* 复用 小任务 1 的可变数组实现（相对路径） */
 #include "../task1_vector/vector.hpp"
+#include "../common/stats/stats.hpp"
 
 #include <chrono>
+#include <cmath>
 #include <cstddef>
 #include <iomanip>
 #include <iostream>
 #include <string>
 #include <vector>
 
-/* 每项测试重复执行的次数（取平均以降低计时抖动） */
-static const int REPEAT = 5;
+/* 每项测试重复执行的次数（取均值与标准差，报告统计离散度） */
+static const int REPEAT = 24;
+
+/* 一次场景的统计结果：均值与总体标准差（毫秒） */
+struct Stat {
+    double mean;
+    double sd;
+};
 
 /* ---------- 跨容器操作适配：自实现 Vector 与 std::vector 接口不同处 ---------- */
 
@@ -109,24 +118,31 @@ static double benchEraseFront(int m)
     });
 }
 
-/* 对指定容器执行某场景并返回重复 REPEAT 次的平均耗时（毫秒） */
+/* 对指定容器执行某场景，返回 REPEAT 次的原始计时样本（毫秒），供均值/标准差与 t 检验复用 */
 template <typename Vec>
-static double runBench(const std::string &scenario, int n)
+static std::vector<double> runSamples(const std::string &scenario, int n)
 {
-    double total = 0.0;
+    std::vector<double> samples;
+    samples.reserve(REPEAT);
     for (int r = 0; r < REPEAT; r++) {
         if (scenario == "append")
-            total += benchAppend<Vec>(n);
+            samples.push_back(benchAppend<Vec>(n));
         else if (scenario == "append_reserve")
-            total += benchAppendReserve<Vec>(n);
+            samples.push_back(benchAppendReserve<Vec>(n));
         else if (scenario == "access")
-            total += benchAccess<Vec>(n);
+            samples.push_back(benchAccess<Vec>(n));
         else if (scenario == "insert_front")
-            total += benchInsertFront<Vec>(n);
+            samples.push_back(benchInsertFront<Vec>(n));
         else if (scenario == "erase_front")
-            total += benchEraseFront<Vec>(n);
+            samples.push_back(benchEraseFront<Vec>(n));
     }
-    return total / REPEAT;
+    return samples;
+}
+
+/* 由原始样本得到均值与总体标准差 */
+static Stat summarize(const std::vector<double> &samples)
+{
+    return Stat{dsaac::mean(samples), dsaac::sdPop(samples)};
 }
 
 /* 场景对应的操作次数 */
@@ -147,13 +163,13 @@ int main()
     const int sizes[] = {100000, 1000000};
     const std::string scenarios[] = {"append", "append_reserve", "access", "insert_front", "erase_front"};
 
-    /* 保存每次测量结果，供汇总比值复用（避免二次运行引入计时噪声） */
+    /* 保存每次测量结果（原始样本），供汇总比值与显著性检验复用 */
     struct Row {
         std::string scenario;
         int scale;
         long long ops;
-        double our;
-        double stdVec;
+        std::vector<double> our;
+        std::vector<double> stdVec;
     };
     std::vector<Row> rows;
 
@@ -161,31 +177,66 @@ int main()
         /* 头部插入/删除为 O(n^2)，规模缩小 100 倍以保证可运行 */
         int frontN = n / 100;
         std::cout << "# 数据规模 n=" << n << "（头部操作规模 m=" << frontN
-                  << "），每项重复 " << REPEAT << " 次取平均\n";
+                  << "），每项重复 " << REPEAT << " 次，报告均值与标准差\n";
 
         for (const std::string &scenario : scenarios) {
             bool isFront = (scenario == "insert_front" || scenario == "erase_front");
             int scale = isFront ? frontN : n;
             long long opsCount = scenarioOps(scenario, scale);
 
-            double tOur = runBench<dsaac::Vector<int>>(scenario, scale);
-            double tStd = runBench<std::vector<int>>(scenario, scale);
-            rows.push_back({scenario, scale, opsCount, tOur, tStd});
+            std::vector<double> sOur = runSamples<dsaac::Vector<int>>(scenario, scale);
+            std::vector<double> sStd = runSamples<std::vector<int>>(scenario, scale);
+            Stat tOur = summarize(sOur), tStd = summarize(sStd);
+            rows.push_back({scenario, scale, opsCount, sOur, sStd});
 
             std::cout << "PERF vector_" << scenario << " n=" << scale << " ops=" << opsCount
-                      << " time_ms=" << std::fixed << std::setprecision(3) << tOur << '\n';
+                      << " time_ms=" << std::fixed << std::setprecision(3) << tOur.mean
+                      << " sd=" << tOur.sd << '\n';
             std::cout << "PERF std_vector_" << scenario << " n=" << scale << " ops=" << opsCount
-                      << " time_ms=" << tStd << '\n';
+                      << " time_ms=" << tStd.mean << " sd=" << tStd.sd << '\n';
         }
         std::cout << '\n';
     }
 
+    /* 复杂度实测：固定场景、逐级放大规模，观察耗时随 n 的增长（可佐证复杂度而非仅看绝对耗时）
+       append_reserve 消除了扩容搬移，只留每次追加的均摊常数成本，期望随 n 近线性；
+       insert_front 每次搬移整段，期望随 m 近平方。 */
+    std::cout << "# 复杂度实测（dsaac::Vector）：append_reserve 期望随 n 近线性，insert_front 期望随 m 近平方\n";
+    for (int n : {250000, 500000, 1000000}) {
+        double t = dsaac::mean(runSamples<dsaac::Vector<int>>("append_reserve", n));
+        std::cout << "PERF growth_append_reserve n=" << n << " time_ms="
+                  << std::fixed << std::setprecision(3) << t << '\n';
+    }
+    for (int m : {2500, 5000, 10000}) {
+        double t = dsaac::mean(runSamples<dsaac::Vector<int>>("insert_front", m));
+        std::cout << "PERF growth_insert_front n=" << m << " time_ms="
+                  << std::fixed << std::setprecision(3) << t << '\n';
+    }
+    std::cout << '\n';
+
     /* 汇总：输出各场景耗时比值（自实现 / std::vector），便于报告引用 */
     std::cout << "# 汇总：time_ms 比值 = dsaac::Vector 耗时 / std::vector 耗时（>1 表示自实现更慢）\n";
     for (const Row &r : rows) {
+        double mo = dsaac::mean(r.our), ms = dsaac::mean(r.stdVec);
         std::cout << "PERF ratio_" << r.scenario << " n=" << r.scale
                   << " time_ms=" << std::fixed << std::setprecision(3)
-                  << (r.stdVec > 0 ? r.our / r.stdVec : 0.0) << '\n';
+                  << (ms > 0 ? mo / ms : 0.0) << '\n';
+    }
+
+    /* 统计显著性：Welch 两样本 t 检验（H0：两种实现均值相等）+ 均值差的 95% 置信区间 */
+    std::cout << "# 统计显著性：Welch 两样本 t 检验（H0：dsaac::Vector 与 std::vector 均值相等）；\n";
+    std::cout << "# diff95 为均值差 (our - std) 的 95% 置信区间；p<0.05 表示差异显著\n";
+    for (const Row &r : rows) {
+        dsaac::WelchResult w = dsaac::welch(r.our, r.stdVec);
+        double mo = dsaac::mean(r.our), ms = dsaac::mean(r.stdVec);
+        std::cout << "STAT " << r.scenario << " n=" << r.scale
+                  << std::fixed << std::setprecision(3)
+                  << " our_ms=" << mo << " std_ms=" << ms
+                  << " ratio=" << (ms > 0 ? mo / ms : 0.0)
+                  << " t=" << w.t << " df=" << w.df;
+        std::cout << std::defaultfloat << std::setprecision(2) << " p=" << w.p;
+        std::cout << std::fixed << std::setprecision(3)
+                  << " diff95=[" << w.ciLow << "," << w.ciHigh << "]\n";
     }
     return 0;
 }
