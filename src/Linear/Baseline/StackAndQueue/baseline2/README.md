@@ -38,7 +38,14 @@ make           # 生成 test / queue_methods / queue_extend
 make check     # 样例比对
 make methods   # 两种解法对照
 make extend    # 扩展功能自测
+make oracle    # 独立 oracle 校验 outputs/（Python，非自洽）
 ```
+
+## 独立 oracle（非自洽校验）
+
+`tools/oracle.py` 用 **Python 独立实现**队列语义（与 C++ **零共享代码**），严格按课程 README 的三行头部格式重算期望输出，与 `outputs/` 逐用例比对，用于打破"源码产出 → 源码比对"的自洽循环。`make oracle` 输出 `case01..case08: OK` 与 `独立 oracle 校验：8/8 通过`。
+
+> **它发现过一处真实缺陷**：`inputs/case06.txt` 第 3 行曾**多一个空行**，使 `m` 落到第 4 行、违反 README 的"第 3 行为 `m`"。C++ 测试因 `operator>>` 跳过空白而从未暴露；严格按格式解析的 oracle 立即报错。删除空行后 oracle 与 C++ 测试同时通过。
 
 ## 小任务 2：两种解决方案的详细说明（重点）
 
@@ -91,7 +98,9 @@ make extend    # 扩展功能自测
 | `back()` | 访问队尾元素 | `std::queue::back` |
 | `search(v)` | 元素距队首位置（队首为 1），未找到 -1 | `std::queue` 无查找接口 |
 
-`make extend` 自测 **12 项全部通过**。与 `std::queue` 性能对比（同负载）：
+另为对齐 `<queue>` 的**接口语义**，提供非成员 `swap` 与六个比较运算符 `== != < <= > >=`（队首→队尾字典序，与 `std::queue` 一致）。
+
+`make extend` 自测 **33 项全部通过**（含非成员 `swap`、比较运算符、空队列异常，以及 double / char 多类型实例化）。与 `std::queue` 性能对比（同负载）：
 
 | 实现 | n=100000 | n=1000000 |
 | --- | --- | --- |
@@ -104,5 +113,6 @@ make extend    # 扩展功能自测
 
 - `make`：三个程序编译通过，`-Wall` 无警告。
 - `make check`：case01~case08 全部 PASS；stderr 无交叉校验错误。
-- `make methods`：两解法对照 4 项通过；`make extend`：扩展自测 12 项通过。
+- `make methods`：两解法对照 4 项通过；`make extend`：扩展自测 33 项通过。
+- `make oracle`：独立 oracle 校验 8/8 通过（非自洽）；并借其修复 `case06` 的多余空行。
 - 性能数据取 `-O2 -flto`、每项 3 次取平均的单次运行实测值。

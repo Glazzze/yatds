@@ -94,6 +94,17 @@ int dsaac::ExtendedQueue<T>::search(const T& value) const
     return -1;
 }
 
+/* 以"队首→队尾"顺序导出（O(n)；供比较运算符使用） */
+template <typename T>
+std::vector<T> dsaac::ExtendedQueue<T>::to_vector() const
+{
+    std::vector<T> v;
+    v.reserve(count_);
+    for (std::size_t i = 0; i < count_; ++i)
+        v.push_back(buffer_[(front_ + i) % buffer_.size()]);
+    return v;
+}
+
 /* 显式实例化 */
 template class dsaac::ExtendedQueue<int>;
 template class dsaac::ExtendedQueue<double>;

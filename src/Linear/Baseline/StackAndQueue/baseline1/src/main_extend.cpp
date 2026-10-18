@@ -111,6 +111,58 @@ static void testExtendedFeatures(const std::string &name)
         s.reverse();                      // 还原，栈顶 3
         expectInt(name + ": 两次 reverse 还原 top==3", s.top(), 3);
     }
+    // 非成员 swap（对齐 std::swap 的两参数调用形式）
+    {
+        S a = makeExt<S>(10);
+        S b = makeExt<S>(10);
+        a.push(1); a.push(2);
+        b.push(9);
+        swap(a, b);
+        expectInt(name + ": 非成员 swap 后 a.top==9", a.top(), 9);
+        expectInt(name + ": 非成员 swap 后 b.top==2", b.top(), 2);
+    }
+    // 比较运算符（栈底→栈顶字典序，与 std::stack 一致）
+    {
+        S a = makeExt<S>(10); a.push(1); a.push(2);  // 栈底→栈顶：1,2
+        S b = makeExt<S>(10); b.push(1); b.push(2);
+        S c = makeExt<S>(10); c.push(1); c.push(3);
+        S d = makeExt<S>(10); d.push(1);             // 仅含 1，是 a 的前缀
+        expectBool(name + ": == 相等栈", a == b, true);
+        expectBool(name + ": != 不等栈", a != c, true);
+        expectBool(name + ": <  字典序", a < c, true);
+        expectBool(name + ": <= 相等", a <= b, true);
+        expectBool(name + ": >  反序", c > a, true);
+        expectBool(name + ": >= 相等", a >= b, true);
+        expectBool(name + ": 前缀更小 d<a", d < a, true);
+    }
+    // 异常路径：空栈 pop / top 抛 out_of_range
+    {
+        S s = makeExt<S>(10);
+        bool threwPop = false, threwTop = false;
+        try { s.pop(); } catch (const std::out_of_range &) { threwPop = true; } catch (...) {}
+        try { (void)s.top(); } catch (const std::out_of_range &) { threwTop = true; } catch (...) {}
+        expectInt(name + ": 空栈 pop 抛 out_of_range", threwPop ? 1 : 0, 1);
+        expectInt(name + ": 空栈 top 抛 out_of_range", threwTop ? 1 : 0, 1);
+    }
+}
+
+/* 多类型覆盖：样例只用 int，这里对 double / char 各跑一组基本 LIFO 断言，
+ * 验证模板实例化（stackar.cpp / stackli.cpp 已显式实例化 int/double/char）。 */
+template <typename T>
+static void testValueTypes(const std::string &name)
+{
+    dsaac::ExtendedArrayStack<T> a(4);
+    a.push(T(1)); a.push(T(2)); a.push(T(3));  // 栈底→栈顶：1,2,3
+    expectInt(name + ": 数组栈 size==3", static_cast<long long>(a.size()), 3);
+    expectBool(name + ": 数组栈 top==3", a.top() == T(3), true);
+    expectInt(name + ": 数组栈 search(1)==3", a.search(T(1)), 3);
+    a.reverse();                               // 栈顶变 1
+    expectBool(name + ": reverse 后 top==1", a.top() == T(1), true);
+
+    dsaac::ExtendedLinkedStack<T> l;
+    l.push(T(1)); l.push(T(2));                // 栈底→栈顶：1,2
+    expectBool(name + ": 链式栈 top==2", l.top() == T(2), true);
+    expectInt(name + ": 链式栈 search(1)==2", l.search(T(1)), 2);
 }
 
 /* ============================ 性能对比 ============================ */
@@ -167,6 +219,8 @@ int main()
 {
     testExtendedFeatures<dsaac::ExtendedArrayStack<int>>("扩展数组栈");
     testExtendedFeatures<dsaac::ExtendedLinkedStack<int>>("扩展链式栈");
+    testValueTypes<double>("double 栈");
+    testValueTypes<char>("char 栈");
     std::cout << "# 扩展功能自测：通过 " << gPassed << " 项，失败 " << gFailed << " 项\n";
 
     printPerfLines();

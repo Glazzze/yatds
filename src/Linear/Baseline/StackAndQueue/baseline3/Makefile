@@ -2,6 +2,7 @@
 #
 # 一条命令完成编译：make     生成 test
 # 运行样例比对：        make check
+# 独立 oracle 校验：    make oracle   （Python 独立实现，非自洽）
 # 清理构建产物：        make clean
 
 CXX      = g++
@@ -21,7 +22,12 @@ test: $(SRC)/main_test.cpp $(SRC)/stack_by_queue.cpp $(SRC)/queue_by_stack.cpp $
 check: test
 	./test
 
+# 独立 oracle：用 Python 独立实现（与 C++ 零共享代码）按 README 格式重算期望输出，
+# 与 outputs/ 逐用例比对，打破"源码产出 → 源码比对"的自洽循环
+oracle:
+	python3 tools/oracle.py
+
 clean:
 	rm -f $(TARGETS)
 
-.PHONY: all check clean
+.PHONY: all check oracle clean

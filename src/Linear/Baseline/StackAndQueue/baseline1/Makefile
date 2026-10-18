@@ -3,6 +3,7 @@
 # 一条命令完成编译：make          生成 test（命令式测试）与 stack_extend（扩展自测）
 # 运行样例比对：        make check
 # 运行扩展功能自测：    make extend
+# 独立 oracle 校验：    make oracle   （Python 独立实现，非自洽）
 # 清理构建产物：        make clean
 #
 # 复用的依赖代码（给定骨架的实现）位于 ../src/array_stack 与 ../src/linked_stack，
@@ -35,7 +36,12 @@ check: test
 extend: stack_extend
 	./stack_extend
 
+# 独立 oracle：用 Python 独立实现（与 C++ 零共享代码）按 README 格式重算期望输出，
+# 与 outputs/ 逐用例比对，打破"源码产出 → 源码比对"的自洽循环
+oracle:
+	python3 tools/oracle.py
+
 clean:
 	rm -f $(TARGETS)
 
-.PHONY: all check extend clean
+.PHONY: all check extend oracle clean

@@ -100,6 +100,13 @@ void dsaac::ExtendedArrayStack<T>::reverse()
     std::reverse(values_.begin(), values_.end());
 }
 
+/* 以"栈底→栈顶"顺序导出（O(n)；供比较运算符使用） */
+template <typename T>
+std::vector<T> dsaac::ExtendedArrayStack<T>::to_vector() const
+{
+    return values_;  // values_ 本身即栈底→栈顶
+}
+
 /* =========================== 扩展链式栈 =========================== */
 
 template <typename T>
@@ -177,6 +184,15 @@ template <typename T>
 void dsaac::ExtendedLinkedStack<T>::reverse()
 {
     values_.reverse();
+}
+
+/* 以"栈底→栈顶"顺序导出（O(n)；供比较运算符使用） */
+template <typename T>
+std::vector<T> dsaac::ExtendedLinkedStack<T>::to_vector() const
+{
+    std::vector<T> v(values_.begin(), values_.end());  // 头→尾 = 栈顶→栈底
+    std::reverse(v.begin(), v.end());                  // 翻转为 栈底→栈顶
+    return v;
 }
 
 /* 显式实例化，保证与测试程序分开编译时链接通过 */

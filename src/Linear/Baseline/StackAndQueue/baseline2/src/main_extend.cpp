@@ -70,6 +70,53 @@ static void testExtendedFeatures()
         try { q.push(3); } catch (const std::overflow_error &) { threw = true; } catch (...) {}
         expectInt("满队列 push 抛 overflow_error", threw ? 1 : 0, 1);
     }
+    // 非成员 swap（对齐 std::swap 的两参数调用形式）
+    {
+        dsaac::ExtendedQueue<int> a(10), b(10);
+        a.push(1); a.push(2);
+        b.push(9);
+        swap(a, b);
+        expectInt("非成员 swap 后 a.front==9", a.front(), 9);
+        expectInt("非成员 swap 后 b.front==1", b.front(), 1);
+    }
+    // 比较运算符（队首→队尾字典序，与 std::queue 一致）
+    {
+        dsaac::ExtendedQueue<int> a(10), b(10), c(10), d(10);
+        a.push(1); a.push(2);   // 队首→队尾：1,2
+        b.push(1); b.push(2);
+        c.push(1); c.push(3);
+        d.push(1);              // 仅含 1，是 a 的前缀
+        expectBool("== 相等队列", a == b, true);
+        expectBool("!= 不等队列", a != c, true);
+        expectBool("<  字典序", a < c, true);
+        expectBool("<= 相等", a <= b, true);
+        expectBool(">  反序", c > a, true);
+        expectBool(">= 相等", a >= b, true);
+        expectBool("前缀更小 d<a", d < a, true);
+    }
+    // 异常路径：空队列 pop / front 抛 out_of_range
+    {
+        dsaac::ExtendedQueue<int> q(4);
+        bool threwPop = false, threwFront = false;
+        try { q.pop(); } catch (const std::out_of_range &) { threwPop = true; } catch (...) {}
+        try { (void)q.front(); } catch (const std::out_of_range &) { threwFront = true; } catch (...) {}
+        expectInt("空队列 pop 抛 out_of_range", threwPop ? 1 : 0, 1);
+        expectInt("空队列 front 抛 out_of_range", threwFront ? 1 : 0, 1);
+    }
+}
+
+/* 多类型覆盖：样例只用 int，这里对 double / char 各跑一组基本 FIFO 断言 */
+template <typename T>
+static void testValueTypes(const std::string &name)
+{
+    dsaac::ExtendedQueue<T> q(4);
+    q.push(T(1)); q.push(T(2)); q.push(T(3));  // 队首→队尾：1,2,3
+    expectInt(name + ": size==3", static_cast<long long>(q.size()), 3);
+    expectBool(name + ": front==1", q.front() == T(1), true);
+    expectBool(name + ": back==3", q.back() == T(3), true);
+    expectInt(name + ": search(3)==3", q.search(T(3)), 3);
+    q.pop();
+    expectBool(name + ": pop 后 front==2", q.front() == T(2), true);
 }
 
 template <typename Fn>
@@ -86,6 +133,8 @@ static volatile long long g_sink = 0;
 int main()
 {
     testExtendedFeatures();
+    testValueTypes<double>("double 队列");
+    testValueTypes<char>("char 队列");
     std::cout << "# 扩展队列功能自测：通过 " << gPassed << " 项，失败 " << gFailed << " 项\n";
 
     const long long sizes[] = {100000, 1000000};

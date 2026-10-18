@@ -38,8 +38,13 @@ StackAndQueue/
 make           # 生成 test 与 stack_extend
 make check     # 运行样例比对：case01: PASS / ...
 make extend    # 编译并运行扩展功能自测
+make oracle    # 独立 oracle 校验 outputs/（Python，非自洽）
 make clean     # 清理构建产物
 ```
+
+## 独立 oracle（非自洽校验）
+
+`tools/oracle.py` 用 **Python 独立实现**栈语义（与 C++ **零共享代码**），严格按课程 README 的三行头部格式重算期望输出，与 `outputs/` 逐用例比对，用于打破"源码产出 → 源码比对"的自洽循环。`make oracle` 输出 `case01..case08: OK` 与 `独立 oracle 校验：8/8 通过`。
 
 ## 小任务 1：程序与结果分析
 
@@ -80,10 +85,12 @@ make clean     # 清理构建产物
 | `clear()` | 删除全部元素 | O(n) / O(n) | `std::stack` 无，需循环 `pop` |
 | `swap(other)` | 交换两栈内容 | O(1) / O(1) | 对应 `std::stack::swap` |
 | `search(v)` | 元素距栈顶位置（栈顶为 1），未找到 -1 | O(n) / O(n) | `std::stack` 无查找接口 |
-| `peek(depth)` | 访问距栈顶第 depth 个元素，越界抛 `out_of_range` | O(1) / O(depth) | `std::stack` 仅 `top` |
+| `peek(depth)` | 访问距栈顶第 depth 个元素，越界抛 `out_of_range` | O(depth) / O(depth) | `std::stack` 仅 `top` |
 | `reverse()` | 原地反转整栈 | O(n) / O(n) | `std::stack` 无 |
 
-`make extend` 自测：两种实现共 **28 项断言全部通过**（含 `peek` 越界的异常检查）。
+另为对齐 `<stack>` 的**接口语义**，提供非成员 `swap(a, b)` 与六个比较运算符 `== != < <= > >=`（栈底→栈顶字典序，与 `std::stack` 一致）；并统一两实现的复杂度契约：`search` 为 $O(n)$、`peek` 为 $O(depth)$（数组实现实际 $O(1)$，优于契约上界）。
+
+`make extend` 自测：两种实现共 **62 项断言全部通过**（含 `peek` 越界、空栈抛异常、非成员 `swap` 与比较运算符，以及 double / char 多类型实例化）。
 
 **与 `std::stack` 的性能对比**（扩展栈 vs `std::stack<int>`，同负载）：
 
@@ -99,5 +106,6 @@ make clean     # 清理构建产物
 
 - `make`：`test` 与 `stack_extend` 编译通过，`-Wall` 无警告。
 - `make check`：case01~case08 全部 PASS；stderr 无交叉校验错误。
-- `make extend`：扩展功能自测 28 项全部通过。
+- `make extend`：扩展功能自测 62 项全部通过。
+- `make oracle`：独立 oracle 校验 8/8 通过（非自洽）。
 - 性能数据取 `-O2 -flto`、每项 3 次取平均的单次运行实测值。

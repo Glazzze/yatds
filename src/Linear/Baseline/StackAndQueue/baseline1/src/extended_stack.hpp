@@ -19,6 +19,14 @@ namespace dsaac {
  *   search(value)        元素距栈顶的 1 基位置，未找到返回 -1
  *   peek(depth)          访问距栈顶第 depth 个元素（栈顶为 1），越界抛异常
  *   reverse()            原地反转整栈
+ *   to_vector()          以"栈底→栈顶"顺序导出（供比较运算符使用），O(n)
+ *
+ * 为对齐 <stack> 的接口语义，另提供**非成员** swap 与六个比较运算符
+ * （== != < <= > >=，按"栈底→栈顶"字典序，与 std::stack 一致）。
+ *
+ * 统一的复杂度契约（两实现一致，均为上界保证）：
+ *   search(v)  —— O(n)
+ *   peek(depth)—— O(depth)（数组实现实际为 O(1)，为链表实现的上界）
  */
 
 template <typename T>
@@ -39,6 +47,7 @@ public:
     int search(const T& value) const;
     T peek(std::size_t depth) const;
     void reverse();
+    std::vector<T> to_vector() const;  // 栈底→栈顶
 
 private:
     std::vector<T> values_;
@@ -60,10 +69,59 @@ public:
     int search(const T& value) const;
     T peek(std::size_t depth) const;
     void reverse();
+    std::vector<T> to_vector() const;  // 栈底→栈顶
 
 private:
     std::forward_list<T> values_;
 };
+
+/* ---------- 非成员 swap（对齐 std::swap 的两参数调用形式）---------- */
+
+template <typename T>
+void swap(ExtendedArrayStack<T>& a, ExtendedArrayStack<T>& b) { a.swap(b); }
+
+template <typename T>
+void swap(ExtendedLinkedStack<T>& a, ExtendedLinkedStack<T>& b) { a.swap(b); }
+
+/* ---------- 六个比较运算符（按"栈底→栈顶"字典序，与 std::stack 一致）---------- */
+
+template <typename T>
+bool operator==(const ExtendedArrayStack<T>& a, const ExtendedArrayStack<T>& b)
+{ return a.to_vector() == b.to_vector(); }
+template <typename T>
+bool operator!=(const ExtendedArrayStack<T>& a, const ExtendedArrayStack<T>& b)
+{ return !(a == b); }
+template <typename T>
+bool operator<(const ExtendedArrayStack<T>& a, const ExtendedArrayStack<T>& b)
+{ return a.to_vector() < b.to_vector(); }
+template <typename T>
+bool operator<=(const ExtendedArrayStack<T>& a, const ExtendedArrayStack<T>& b)
+{ return !(b < a); }
+template <typename T>
+bool operator>(const ExtendedArrayStack<T>& a, const ExtendedArrayStack<T>& b)
+{ return b < a; }
+template <typename T>
+bool operator>=(const ExtendedArrayStack<T>& a, const ExtendedArrayStack<T>& b)
+{ return !(a < b); }
+
+template <typename T>
+bool operator==(const ExtendedLinkedStack<T>& a, const ExtendedLinkedStack<T>& b)
+{ return a.to_vector() == b.to_vector(); }
+template <typename T>
+bool operator!=(const ExtendedLinkedStack<T>& a, const ExtendedLinkedStack<T>& b)
+{ return !(a == b); }
+template <typename T>
+bool operator<(const ExtendedLinkedStack<T>& a, const ExtendedLinkedStack<T>& b)
+{ return a.to_vector() < b.to_vector(); }
+template <typename T>
+bool operator<=(const ExtendedLinkedStack<T>& a, const ExtendedLinkedStack<T>& b)
+{ return !(b < a); }
+template <typename T>
+bool operator>(const ExtendedLinkedStack<T>& a, const ExtendedLinkedStack<T>& b)
+{ return b < a; }
+template <typename T>
+bool operator>=(const ExtendedLinkedStack<T>& a, const ExtendedLinkedStack<T>& b)
+{ return !(a < b); }
 
 } // namespace dsaac
 

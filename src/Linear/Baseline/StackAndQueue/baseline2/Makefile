@@ -4,6 +4,7 @@
 # 运行样例比对：        make check
 # 两种解法对照：        make methods
 # 扩展功能自测：        make extend
+# 独立 oracle 校验：    make oracle   （Python 独立实现，非自洽）
 # 清理构建产物：        make clean
 #
 # 复用给定 queue.hpp 的实现（../src/queue/queue.cpp），不复制副本。
@@ -40,7 +41,12 @@ methods: queue_methods
 extend: queue_extend
 	./queue_extend
 
+# 独立 oracle：用 Python 独立实现（与 C++ 零共享代码）按 README 格式重算期望输出，
+# 与 outputs/ 逐用例比对，打破"源码产出 → 源码比对"的自洽循环
+oracle:
+	python3 tools/oracle.py
+
 clean:
 	rm -f $(TARGETS)
 
-.PHONY: all check methods extend clean
+.PHONY: all check methods extend oracle clean

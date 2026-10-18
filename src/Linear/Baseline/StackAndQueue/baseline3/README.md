@@ -33,7 +33,12 @@ StackAndQueue/
 ```sh
 make           # 生成 test
 make check     # 样例比对
+make oracle    # 独立 oracle 校验 outputs/（Python，非自洽）
 ```
+
+## 独立 oracle（非自洽校验）
+
+`tools/oracle.py` 用 **Python 独立实现**"队列实现栈 / 栈实现队列 / 互转"语义（与 C++ **零共享代码**），按课程 README 的 `T` 场景格式重算期望输出，与 `outputs/` 逐用例比对，打破自洽循环。`make oracle` 输出 `case01..case04: OK` 与 `独立 oracle 校验：4/4 通过`。
 
 ## 小任务 1/2：实现原理
 
@@ -80,4 +85,5 @@ make check     # 样例比对
 
 - `make`：编译通过，`-Wall` 无警告。
 - `make check`：case01~case04 全部 PASS（case01 与父级 README 样例逐字一致）。
+- `make oracle`：独立 oracle 校验 4/4 通过（非自洽）。
 - 性能数据取 `-O2 -flto`、每项 3 次取平均的单次运行实测值。
