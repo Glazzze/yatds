@@ -1,0 +1,96 @@
+./vector_perf
+# 数据规模 n=100000（头部操作规模 m=1000），每项重复 24 次，报告均值与标准差
+PERF vector_append n=100000 ops=100000 time_ms=0.147 sd=0.035
+PERF std_vector_append n=100000 ops=100000 time_ms=0.118 sd=0.011
+PERF vector_append_reserve n=100000 ops=100000 time_ms=0.098 sd=0.008
+PERF std_vector_append_reserve n=100000 ops=100000 time_ms=0.071 sd=0.005
+PERF vector_access n=100000 ops=100000 time_ms=0.102 sd=0.014
+PERF std_vector_access n=100000 ops=100000 time_ms=0.100 sd=0.011
+PERF vector_insert_front n=1000 ops=1000 time_ms=0.367 sd=0.018
+PERF std_vector_insert_front n=1000 ops=1000 time_ms=0.047 sd=0.002
+PERF vector_erase_front n=1000 ops=1000 time_ms=0.039 sd=0.002
+PERF std_vector_erase_front n=1000 ops=1000 time_ms=0.038 sd=0.002
+
+# 数据规模 n=1000000（头部操作规模 m=10000），每项重复 24 次，报告均值与标准差
+PERF vector_append n=1000000 ops=1000000 time_ms=0.959 sd=0.138
+PERF std_vector_append n=1000000 ops=1000000 time_ms=0.881 sd=0.329
+PERF vector_append_reserve n=1000000 ops=1000000 time_ms=0.654 sd=0.114
+PERF std_vector_append_reserve n=1000000 ops=1000000 time_ms=0.518 sd=0.069
+PERF vector_access n=1000000 ops=1000000 time_ms=0.873 sd=0.118
+PERF std_vector_access n=1000000 ops=1000000 time_ms=0.889 sd=0.062
+PERF vector_insert_front n=10000 ops=10000 time_ms=25.781 sd=1.539
+PERF std_vector_insert_front n=10000 ops=10000 time_ms=3.104 sd=0.278
+PERF vector_erase_front n=10000 ops=10000 time_ms=2.926 sd=0.154
+PERF std_vector_erase_front n=10000 ops=10000 time_ms=2.899 sd=0.143
+
+# 复杂度实测（dsaac::Vector）：append_reserve 期望随 n 近线性，insert_front 期望随 m 近平方
+PERF growth_append_reserve n=250000 time_ms=0.111
+PERF growth_append_reserve n=500000 time_ms=0.314
+PERF growth_append_reserve n=1000000 time_ms=0.635
+PERF growth_insert_front n=2500 time_ms=1.594
+PERF growth_insert_front n=5000 time_ms=6.329
+PERF growth_insert_front n=10000 time_ms=30.018
+
+# 汇总：time_ms 比值 = dsaac::Vector 耗时 / std::vector 耗时（>1 表示自实现更慢）
+PERF ratio_append n=100000 time_ms=1.251
+PERF ratio_append_reserve n=100000 time_ms=1.374
+PERF ratio_access n=100000 time_ms=1.021
+PERF ratio_insert_front n=1000 time_ms=7.894
+PERF ratio_erase_front n=1000 time_ms=1.020
+PERF ratio_append n=1000000 time_ms=1.088
+PERF ratio_append_reserve n=1000000 time_ms=1.263
+PERF ratio_access n=1000000 time_ms=0.982
+PERF ratio_insert_front n=10000 time_ms=8.305
+PERF ratio_erase_front n=10000 time_ms=1.009
+# 统计显著性：Welch 两样本 t 检验（H0：dsaac::Vector 与 std::vector 均值相等）；
+# diff95 为均值差 (our - std) 的 95% 置信区间；p<0.05 表示差异显著
+STAT append n=100000 our_ms=0.147 std_ms=0.118 ratio=1.251 t=3.838 df=27.759 p=0.00065 diff95=[0.014,0.045]
+STAT append_reserve n=100000 our_ms=0.098 std_ms=0.071 ratio=1.374 t=12.834 df=39.991 p=9.2e-16 diff95=[0.022,0.031]
+STAT access n=100000 our_ms=0.102 std_ms=0.100 ratio=1.021 t=0.557 df=42.786 p=0.58 diff95=[-0.005,0.010]
+STAT insert_front n=1000 our_ms=0.367 std_ms=0.047 ratio=7.894 t=84.130 df=23.828 p=5.4e-31 diff95=[0.313,0.329]
+STAT erase_front n=1000 our_ms=0.039 std_ms=0.038 ratio=1.020 t=1.339 df=42.005 p=0.19 diff95=[-0.000,0.002]
+STAT append n=1000000 our_ms=0.959 std_ms=0.881 ratio=1.088 t=1.041 df=30.908 p=0.31 diff95=[-0.074,0.229]
+STAT append_reserve n=1000000 our_ms=0.654 std_ms=0.518 ratio=1.263 t=4.883 df=37.915 p=1.9e-05 diff95=[0.080,0.193]
+STAT access n=1000000 our_ms=0.873 std_ms=0.889 ratio=0.982 t=-0.566 df=34.895 p=0.57 diff95=[-0.072,0.041]
+STAT insert_front n=10000 our_ms=25.781 std_ms=3.104 ratio=8.305 t=69.552 df=24.495 p=1.2e-29 diff95=[22.004,23.349]
+STAT erase_front n=10000 our_ms=2.926 std_ms=2.899 ratio=1.009 t=0.608 df=45.780 p=0.55 diff95=[-0.062,0.115]
+./array_list_cmp
+# 数据规模 n=100000（头部插入 m=1000，随机访问 k=2000），每项重复 24 次，报告均值与标准差
+PERF vector_like_append n=100000 ops=100000 time_ms=0.259 sd=0.048
+PERF linked_list_append n=100000 ops=100000 time_ms=0.793 sd=0.075
+PERF vector_like_prepend n=1000 ops=1000 time_ms=0.431 sd=0.469
+PERF linked_list_prepend n=1000 ops=1000 time_ms=0.012 sd=0.013
+PERF vector_like_traverse n=100000 ops=100000 time_ms=0.005 sd=0.001
+PERF linked_list_traverse n=100000 ops=100000 time_ms=0.109 sd=0.007
+PERF vector_like_random n=100000 ops=2000 time_ms=0.002 sd=0.001
+PERF linked_list_random n=100000 ops=2000 time_ms=109.400 sd=22.928
+
+# 数据规模 n=1000000（头部插入 m=10000，随机访问 k=2000），每项重复 24 次，报告均值与标准差
+PERF vector_like_append n=1000000 ops=1000000 time_ms=2.695 sd=0.170
+PERF linked_list_append n=1000000 ops=1000000 time_ms=7.696 sd=0.472
+PERF vector_like_prepend n=10000 ops=10000 time_ms=43.259 sd=46.157
+PERF linked_list_prepend n=10000 ops=10000 time_ms=0.102 sd=0.051
+PERF vector_like_traverse n=1000000 ops=1000000 time_ms=0.066 sd=0.018
+PERF linked_list_traverse n=1000000 ops=1000000 time_ms=1.423 sd=0.278
+PERF vector_like_random n=1000000 ops=2000 time_ms=0.009 sd=0.016
+PERF linked_list_random n=1000000 ops=2000 time_ms=1232.300 sd=196.685
+
+# 汇总：time_ms 比值 = 链表耗时 / 可变数组耗时（>1 表示链表更慢）
+PERF ratio_append n=100000 time_ms=3.057
+PERF ratio_prepend n=1000 time_ms=0.028
+PERF ratio_traverse n=100000 time_ms=20.514
+PERF ratio_random n=100000 time_ms=47203.706
+PERF ratio_append n=1000000 time_ms=2.855
+PERF ratio_prepend n=10000 time_ms=0.002
+PERF ratio_traverse n=1000000 time_ms=21.493
+PERF ratio_random n=1000000 time_ms=133122.682
+# 统计显著性：Welch 两样本 t 检验（H0：链表与可变数组均值相等）；
+# diff95 为均值差 (list - vec) 的 95% 置信区间；p<0.05 表示差异显著
+STAT append n=100000 vec_ms=0.259 list_ms=0.793 ratio=3.057 t=28.660 df=39.174 p=6.8e-28 diff95=[0.496,0.571]
+STAT prepend n=1000 vec_ms=0.431 list_ms=0.012 ratio=0.028 t=-4.282 df=23.033 p=0.00028 diff95=[-0.622,-0.217]
+STAT traverse n=100000 vec_ms=0.005 list_ms=0.109 ratio=20.514 t=73.449 df=23.875 p=1.2e-29 diff95=[0.101,0.107]
+STAT random n=100000 vec_ms=0.002 list_ms=109.400 ratio=47203.706 t=22.883 df=23.000 p=2.5e-17 diff95=[99.508,119.288]
+STAT append n=1000000 vec_ms=2.695 list_ms=7.696 ratio=2.855 t=47.775 df=28.882 p=4.9e-29 diff95=[4.787,5.215]
+STAT prepend n=10000 vec_ms=43.259 list_ms=0.102 ratio=0.002 t=-4.484 df=23.000 p=0.00017 diff95=[-63.067,-23.248]
+STAT traverse n=1000000 vec_ms=0.066 list_ms=1.423 ratio=21.493 t=23.373 df=23.187 p=1.3e-17 diff95=[1.237,1.477]
+STAT random n=1000000 vec_ms=0.009 list_ms=1232.300 ratio=133122.682 t=30.047 df=23.000 p=5.8e-20 diff95=[1147.452,1317.130]

@@ -1,0 +1,45 @@
+g++ -std=c++17 -Wall -O2 -flto stackar.cpp teststka.cpp -o test
+./test
+# 接口自检：通过 39 项，失败 0 项
+case01.txt: PASS
+case02.txt: PASS
+case03.txt: PASS
+case04.txt: PASS
+case05.txt: PASS
+case06.txt: PASS
+case07.txt: PASS
+共 7 个用例，通过 7 个
+PERF array_stack n=100000 ops=200000 time_ms=0.38
+PERF std_stack n=100000 ops=200000 time_ms=0.24
+PERF array_stack n=1000000 ops=2000000 time_ms=3.83
+PERF std_stack n=1000000 ops=2000000 time_ms=2.14
+g++ -std=c++17 -Wall -O2 -flto stackli.cpp teststkl.cpp -o test
+./test
+# 接口自检：通过 27 项，失败 0 项
+case01.txt: PASS
+case02.txt: PASS
+case03.txt: PASS
+case04.txt: PASS
+case05.txt: PASS
+case06.txt: PASS
+case07.txt: PASS
+共 7 个用例，通过 7 个
+PERF linked_stack n=100000 ops=200000 time_ms=6.41
+PERF std_stack n=100000 ops=200000 time_ms=0.45
+PERF linked_stack n=1000000 ops=2000000 time_ms=25.58
+PERF std_stack n=1000000 ops=2000000 time_ms=2.24
+g++ -std=c++17 -Wall -O2 -flto queue.cpp testque.cpp -o test
+./test
+# 接口自检：通过 48 项，失败 0 项
+case01.txt: PASS
+case02.txt: PASS
+case03.txt: PASS
+case04.txt: PASS
+case05.txt: PASS
+case06.txt: PASS
+case07.txt: PASS
+共 7 个用例，通过 7 个
+PERF circular_queue n=100000 ops=200000 time_ms=1.53
+PERF std_queue n=100000 ops=200000 time_ms=0.29
+PERF circular_queue n=1000000 ops=2000000 time_ms=12.20
+PERF std_queue n=1000000 ops=2000000 time_ms=2.37

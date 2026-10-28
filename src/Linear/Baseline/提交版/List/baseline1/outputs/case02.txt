@@ -1,0 +1,10 @@
+0
+EMPTY
+2
+5
+1
+true
+false
+2 5
+0
+EMPTY

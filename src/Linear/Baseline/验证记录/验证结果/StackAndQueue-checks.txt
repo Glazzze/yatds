@@ -1,0 +1,110 @@
+make[1]: Nothing to be done for `all'.
+make[1]: Nothing to be done for `all'.
+make[1]: Nothing to be done for `all'.
+./test
+case01.txt: PASS
+case02.txt: PASS
+case03.txt: PASS
+case04.txt: PASS
+case05.txt: PASS
+case06.txt: PASS
+case07.txt: PASS
+case08.txt: PASS
+共 8 个用例，通过 8 个
+PERF array_stack n=100000 ops=200000 time_ms=0.269264
+PERF linked_stack n=100000 ops=200000 time_ms=1.552917
+PERF std_stack n=100000 ops=200000 time_ms=0.163833
+PERF array_stack n=1000000 ops=2000000 time_ms=2.814764
+PERF linked_stack n=1000000 ops=2000000 time_ms=17.529861
+PERF std_stack n=1000000 ops=2000000 time_ms=1.698778
+./test
+case01.txt: PASS
+case02.txt: PASS
+case03.txt: PASS
+case04.txt: PASS
+case05.txt: PASS
+case06.txt: PASS
+case07.txt: PASS
+case08.txt: PASS
+共 8 个用例，通过 8 个
+PERF circular_queue n=100000 ops=200000 time_ms=0.766722
+PERF linked_queue n=100000 ops=200000 time_ms=1.562028
+PERF std_queue n=100000 ops=200000 time_ms=0.135500
+PERF circular_queue n=1000000 ops=2000000 time_ms=7.802042
+PERF linked_queue n=1000000 ops=2000000 time_ms=16.201111
+PERF std_queue n=1000000 ops=2000000 time_ms=1.501806
+./test
+case01.txt: PASS
+case02.txt: PASS
+case03.txt: PASS
+case04.txt: PASS
+共 4 个用例，通过 4 个
+PERF stack_by_queue n=1000 ops=2000 time_ms=0.552486
+PERF queue_by_stack n=1000 ops=2000 time_ms=0.006486
+PERF vector_based n=1000 ops=2000 time_ms=0.005500
+PERF vector_stack n=1000 ops=2000 time_ms=0.003195
+PERF stack_by_queue n=5000 ops=10000 time_ms=13.787167
+PERF queue_by_stack n=5000 ops=10000 time_ms=0.040764
+PERF vector_based n=5000 ops=10000 time_ms=0.022347
+PERF vector_stack n=5000 ops=10000 time_ms=0.014125
+python3 tools/oracle.py
+case01.txt: OK（独立 oracle 与 outputs 一致）
+case02.txt: OK（独立 oracle 与 outputs 一致）
+case03.txt: OK（独立 oracle 与 outputs 一致）
+case04.txt: OK（独立 oracle 与 outputs 一致）
+case05.txt: OK（独立 oracle 与 outputs 一致）
+case06.txt: OK（独立 oracle 与 outputs 一致）
+case07.txt: OK（独立 oracle 与 outputs 一致）
+case08.txt: OK（独立 oracle 与 outputs 一致）
+独立 oracle 校验：8/8 通过
+python3 tools/oracle.py
+case01.txt: OK（独立 oracle 与 outputs 一致）
+case02.txt: OK（独立 oracle 与 outputs 一致）
+case03.txt: OK（独立 oracle 与 outputs 一致）
+case04.txt: OK（独立 oracle 与 outputs 一致）
+case05.txt: OK（独立 oracle 与 outputs 一致）
+case06.txt: OK（独立 oracle 与 outputs 一致）
+case07.txt: OK（独立 oracle 与 outputs 一致）
+case08.txt: OK（独立 oracle 与 outputs 一致）
+独立 oracle 校验：8/8 通过
+python3 tools/oracle.py
+case01.txt: OK（独立 oracle 与 outputs 一致）
+case02.txt: OK（独立 oracle 与 outputs 一致）
+case03.txt: OK（独立 oracle 与 outputs 一致）
+case04.txt: OK（独立 oracle 与 outputs 一致）
+独立 oracle 校验：4/4 通过
+/Library/Developer/CommandLineTools/usr/bin/make -C baseline1 extend
+./stack_extend
+# 扩展功能自测：通过 62 项，失败 0 项
+PERF array_stack_ext n=100000 ops=200000 time_ms=0.257362
+PERF linked_stack_ext n=100000 ops=200000 time_ms=1.634819
+PERF std_stack n=100000 ops=200000 time_ms=0.181111
+PERF array_stack_ext n=1000000 ops=2000000 time_ms=2.730347
+PERF linked_stack_ext n=1000000 ops=2000000 time_ms=17.601264
+PERF std_stack n=1000000 ops=2000000 time_ms=1.847889
+/Library/Developer/CommandLineTools/usr/bin/make -C baseline2 methods extend
+./queue_methods
+# 两种解法对照：通过 4 项，失败 0 项
+PERF circular_queue n=100000 ops=200000 time_ms=0.779917
+PERF sized_queue n=100000 ops=200000 time_ms=0.444056
+PERF circular_queue n=1000000 ops=2000000 time_ms=7.673958
+PERF sized_queue n=1000000 ops=2000000 time_ms=4.537528
+./queue_extend
+# 扩展队列功能自测：通过 33 项，失败 0 项
+PERF circular_queue_ext n=100000 ops=200000 time_ms=0.432889
+PERF std_queue n=100000 ops=200000 time_ms=0.129389
+PERF circular_queue_ext n=1000000 ops=2000000 time_ms=4.565972
+PERF std_queue n=1000000 ops=2000000 time_ms=1.398403
+python3 tools/test_build_failures.py
+Makefile failure propagation: 6 PASS
+python3 tools/test_perf_stats.py
+Performance collector regression: 7 PASS
+baseline1 ASan/UBSan exit=0
+baseline2 ASan/UBSan exit=0
+baseline3 ASan/UBSan exit=0
+RSS array     n=1000000  delta_kb=3952  bytes_per_elem=4.05
+RSS linked    n=1000000  delta_kb=15760  bytes_per_elem=16.14
+RSS stdstack  n=1000000  delta_kb=3920  bytes_per_elem=4.01
+RSS circular  n=1000000  delta_kb=3952  bytes_per_elem=4.05
+RSS linkedq   n=1000000  delta_kb=15728  bytes_per_elem=16.11
+RSS stdqueue  n=1000000  delta_kb=3984  bytes_per_elem=4.08

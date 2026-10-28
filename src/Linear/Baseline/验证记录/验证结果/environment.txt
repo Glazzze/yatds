@@ -1,0 +1,5 @@
+platform=macOS-15.7.9-arm64-arm-64bit
+architecture=arm64
+Apple clang version 16.0.0 (clang-1600.0.26.6)
+Python 3.9.6
+GNU Make 3.81

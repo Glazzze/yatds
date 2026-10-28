@@ -1,0 +1,82 @@
+make[1]: Nothing to be done for `all'.
+make[1]: Nothing to be done for `all'.
+make[1]: Nothing to be done for `all'.
+mkdir -p results
+python3 tools/perf_stats.py baseline1 ./test 30 --ref std_stack --csv results/stack.csv
+# baseline1/./test  独立运行 30 次，每项报告 均值 ± 总体标准差（ms）
+
+## n=100000
+  array_stack            0.282685 ±  0.020076
+  linked_stack           1.605861 ±  0.067188
+  std_stack              0.173795 ±  0.014673
+  Welch t 检验（H0：两组均值相等）：
+    array_stack vs std_stack: t=  23.582 df= 53.10 p=8.34e-30 ***（显著）
+    linked_stack vs std_stack: t= 112.138 df= 31.76 p=7.6e-43 ***（显著）
+
+## n=1000000
+  array_stack            2.939878 ±  0.091665
+  linked_stack          16.703416 ±  0.587903
+  std_stack              1.834294 ±  0.184596
+  Welch t 检验（H0：两组均值相等）：
+    array_stack vs std_stack: t=  28.887 df= 42.48 p=1.47e-29 ***（显著）
+    linked_stack vs std_stack: t= 129.945 df= 34.66 p=3.41e-48 ***（显著）
+python3 tools/perf_stats.py baseline2 ./test 30 --ref std_queue --csv results/queue.csv
+# baseline2/./test  独立运行 30 次，每项报告 均值 ± 总体标准差（ms）
+
+## n=100000
+  circular_queue         0.761634 ±  0.010559
+  linked_queue           1.582733 ±  0.032355
+  std_queue              0.139304 ±  0.008127
+  Welch t 检验（H0：两组均值相等）：
+    circular_queue vs std_queue: t= 251.516 df= 54.43 p=3.94e-85 ***（显著）
+    linked_queue vs std_queue: t= 233.004 df= 32.64 p=3.67e-54 ***（显著）
+
+## n=1000000
+  circular_queue         7.844702 ±  0.080982
+  linked_queue          16.566005 ±  0.382809
+  std_queue              1.482353 ±  0.036567
+  Welch t 检验（H0：两组均值相等）：
+    circular_queue vs std_queue: t= 385.598 df= 40.35 p=1.36e-73 ***（显著）
+    linked_queue vs std_queue: t= 211.228 df= 29.53 p=1.65e-48 ***（显著）
+python3 tools/perf_stats.py baseline2 ./queue_methods 30 --ref circular_queue --csv results/queue_methods.csv
+# baseline2/./queue_methods  独立运行 30 次，每项报告 均值 ± 总体标准差（ms）
+
+## n=100000
+  circular_queue         0.830552 ±  0.333096
+  sized_queue            0.504677 ±  0.264363
+  Welch t 检验（H0：两组均值相等）：
+    sized_queue vs circular_queue: t=  -4.127 df= 55.16 p=0.000125 ***（显著）
+
+## n=1000000
+  circular_queue         7.952126 ±  0.918449
+  sized_queue            4.932700 ±  1.385759
+  Welch t 检验（H0：两组均值相等）：
+    sized_queue vs circular_queue: t=  -9.781 df= 50.36 p=3.13e-13 ***（显著）
+python3 tools/perf_stats.py baseline3 ./test 30 --csv results/conversion.csv
+# baseline3/./test  独立运行 30 次，每项报告 均值 ± 总体标准差（ms）
+
+## n=1000
+  stack_by_queue         0.562739 ±  0.009427
+  queue_by_stack         0.006833 ±  0.000657
+  vector_based           0.004011 ±  0.000703
+  vector_stack           0.003231 ±  0.000191
+  Welch t 检验（H0：两组均值相等）：
+    stack_by_queue vs queue_by_stack: t= 316.789 df= 29.28 p=2.56e-53 ***（显著）
+    stack_by_queue vs vector_based: t= 318.286 df= 29.32 p=1.93e-53 ***（显著）
+    stack_by_queue vs vector_stack: t= 319.549 df= 29.02 p=5.03e-53 ***（显著）
+    queue_by_stack vs vector_based: t=  15.805 df= 57.74 p=1.24e-22 ***（显著）
+    queue_by_stack vs vector_stack: t=  28.365 df= 33.85 p=3.55e-25 ***（显著）
+    vector_based vs vector_stack: t=   5.763 df= 33.24 p=1.89e-06 ***（显著）
+
+## n=5000
+  stack_by_queue        13.803401 ±  0.079003
+  queue_by_stack         0.039975 ±  0.007852
+  vector_based           0.021017 ±  0.002987
+  vector_stack           0.014280 ±  0.000720
+  Welch t 检验（H0：两组均值相等）：
+    stack_by_queue vs queue_by_stack: t= 933.569 df= 29.57 p=1.19e-67 ***（显著）
+    stack_by_queue vs vector_based: t= 938.790 df= 29.08 p=9.97e-67 ***（显著）
+    stack_by_queue vs vector_stack: t= 939.882 df= 29.00 p=1.39e-66 ***（显著）
+    queue_by_stack vs vector_based: t=  12.152 df= 37.22 p=1.6e-14 ***（显著）
+    queue_by_stack vs vector_stack: t=  17.548 df= 29.49 p=3.76e-17 ***（显著）
+    vector_based vs vector_stack: t=  11.808 df= 32.36 p=2.86e-13 ***（显著）
