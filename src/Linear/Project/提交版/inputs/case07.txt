@@ -1,0 +1,7 @@
+# case07 撤销多级连锁：连锁归空 WIN 后 UNDO 完整回滚
+COLORS RB
+TRACK RRBBRR
+QUEUE B
+SHOOT 4
+UNDO
+QUIT

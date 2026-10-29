@@ -1,0 +1,8 @@
+# case11 HINT：存在最优位（0）与无可消除位（-1）
+COLORS RB
+TRACK RRB
+QUEUE RB
+HINT
+SHOOT 2
+HINT
+QUIT

@@ -1,0 +1,8 @@
+# case09 变色球 ?：非法颜色报错（零副作用）→ 定色消除 → 普通球误带颜色报错 → 队列耗尽判负
+COLORS RB
+TRACK RRB
+QUEUE ?R
+SHOOT 2 X
+SHOOT 2 R
+SHOOT 1 R
+SHOOT 1

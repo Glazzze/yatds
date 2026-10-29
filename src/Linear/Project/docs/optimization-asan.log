@@ -1,0 +1,29 @@
+PASS  load-settle            
+PASS  shoot-single           
+PASS  chain                  
+PASS  no-elim                
+PASS  undo-chain             
+PASS  undo-empty             
+PASS  bomb                   
+PASS  bomb-edge              
+PASS  chameleon              
+PASS  chameleon-no-color     
+PASS  swap                   
+PASS  reverse                
+PASS  reverse-right-seam     
+PASS  hint                   
+PASS  bomb-hint-endpoints    
+PASS  reverse-independent    
+PASS  lose-undo              
+PASS  limit                  
+PASS  invalid-shoot          
+PASS  deep-chain             
+PASS  undo-twice             
+PASS  undo-chameleon         
+PASS  undo-bomb              
+PASS  swap-limit             
+PASS  deep-chain-34          
+PASS  score-saturation       
+PASS  swap-after-win         
+ALL CORE TESTS PASSED (27 场景)
+ALL RANDOM DIFF TESTS PASSED (5000 局，seed=20251020)

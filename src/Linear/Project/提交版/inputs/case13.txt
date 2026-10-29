@@ -1,0 +1,7 @@
+# case13 LIMIT 判负：步数达到上限（即使队列未耗尽）
+COLORS RB
+TRACK RB
+QUEUE RRR
+LIMIT 2
+SHOOT 0
+SHOOT 0

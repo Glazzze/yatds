@@ -1,0 +1,6 @@
+# case04 不足三连：插入后仅形成 RR 两连，不消除
+COLORS RB
+TRACK RBR
+QUEUE RB
+SHOOT 1
+QUIT

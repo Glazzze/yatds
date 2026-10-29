@@ -1,0 +1,6 @@
+# case02 三连消除（单轮）：RRB + R → RRR 消除
+COLORS RB
+TRACK RRB
+QUEUE RB
+SHOOT 2
+QUIT

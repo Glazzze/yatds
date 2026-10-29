@@ -1,0 +1,8 @@
+# case06 撤销后再消除：先插入（不消除）→ UNDO → 再插入形成三连
+COLORS RB
+TRACK RRB
+QUEUE RBR
+SHOOT 3
+UNDO
+SHOOT 2
+QUIT

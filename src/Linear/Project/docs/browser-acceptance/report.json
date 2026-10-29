@@ -1,0 +1,359 @@
+{
+  "date": "2026-10-29T00:45:29.777Z",
+  "browser": "Chromium 156.0.8078.4 via Playwright",
+  "checks": [
+    {
+      "ok": true,
+      "label": "Chromium 启动成功",
+      "detail": "156.0.8078.4"
+    },
+    {
+      "ok": true,
+      "label": "file:// 页面标题正确",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "label": "file:// 直接打开成功",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "label": "1232px 无页面横向溢出",
+      "detail": "scrollWidth=1232 viewport=1232"
+    },
+    {
+      "ok": true,
+      "label": "1232px 顶栏/棋盘存在",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "label": "1232px 顶栏与棋盘不重叠",
+      "detail": "hud.bottom=94.1875 board.top=106.1875"
+    },
+    {
+      "ok": true,
+      "label": "1232px 棋盘位于视口内",
+      "detail": "board=[16,1216]"
+    },
+    {
+      "ok": true,
+      "label": "1232px 轨道有球",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "label": "1232px 每颗球都有球面字母",
+      "detail": "[\"R\",\"R\",\"B\",\"B\",\"R\",\"R\"]"
+    },
+    {
+      "ok": true,
+      "label": "1232px 控制条/队列区域可见",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "label": "1020px 无页面横向溢出",
+      "detail": "scrollWidth=1020 viewport=1020"
+    },
+    {
+      "ok": true,
+      "label": "1020px 顶栏/棋盘存在",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "label": "1020px 顶栏与棋盘不重叠",
+      "detail": "hud.bottom=153.390625 board.top=165.390625"
+    },
+    {
+      "ok": true,
+      "label": "1020px 棋盘位于视口内",
+      "detail": "board=[16,1004]"
+    },
+    {
+      "ok": true,
+      "label": "1020px 轨道有球",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "label": "1020px 每颗球都有球面字母",
+      "detail": "[\"R\",\"R\",\"B\",\"B\",\"R\",\"R\"]"
+    },
+    {
+      "ok": true,
+      "label": "1020px 控制条/队列区域可见",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "label": "760px 无页面横向溢出",
+      "detail": "scrollWidth=760 viewport=760"
+    },
+    {
+      "ok": true,
+      "label": "760px 顶栏/棋盘存在",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "label": "760px 顶栏与棋盘不重叠",
+      "detail": "hud.bottom=141.828125 board.top=153.828125"
+    },
+    {
+      "ok": true,
+      "label": "760px 棋盘位于视口内",
+      "detail": "board=[10,750]"
+    },
+    {
+      "ok": true,
+      "label": "760px 轨道有球",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "label": "760px 每颗球都有球面字母",
+      "detail": "[\"R\",\"R\",\"B\",\"B\",\"R\",\"R\"]"
+    },
+    {
+      "ok": true,
+      "label": "760px 控制条/队列区域可见",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "label": "560px 无页面横向溢出",
+      "detail": "scrollWidth=560 viewport=560"
+    },
+    {
+      "ok": true,
+      "label": "560px 顶栏/棋盘存在",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "label": "560px 顶栏与棋盘不重叠",
+      "detail": "hud.bottom=162.96875 board.top=174.96875"
+    },
+    {
+      "ok": true,
+      "label": "560px 棋盘位于视口内",
+      "detail": "board=[10,550]"
+    },
+    {
+      "ok": true,
+      "label": "560px 轨道有球",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "label": "560px 每颗球都有球面字母",
+      "detail": "[\"R\",\"R\",\"B\",\"B\",\"R\",\"R\"]"
+    },
+    {
+      "ok": true,
+      "label": "560px 控制条/队列区域可见",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "label": "灰度模式下球面字母仍可读",
+      "detail": "RRBBRR"
+    },
+    {
+      "ok": true,
+      "label": "胜利结算发生在 case03 关卡",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "label": "胜利结算数据正确",
+      "detail": "{\"score\":\"110\",\"moves\":\"1\",\"chain\":\"×2\",\"cleared\":\"7\",\"title\":\"轨道清空！\"}"
+    },
+    {
+      "ok": true,
+      "label": "结算页撤销恢复初始局面",
+      "detail": "{\"score\":0,\"moves\":0,\"status\":\"playing\",\"track\":\"RRBBRR\",\"queue\":\"B\",\"history\":2}"
+    },
+    {
+      "ok": true,
+      "label": "撤销关闭结算后彩带已清除",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "label": "撤销后 6 颗球均可见",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "label": "帮助弹窗内 Tab 焦点不逃出",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "label": "Esc 关闭帮助并离开弹窗",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "label": "REVERSE 区间选择与消除正确",
+      "detail": "{\"score\":40,\"moves\":1,\"status\":\"playing\",\"track\":\"BB\",\"queue\":\"R\",\"history\":1}"
+    },
+    {
+      "ok": true,
+      "label": "变色球数字键定色并消除",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "label": "队列耗尽显示失败结算",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "label": "SWAP 前队首为 B/R",
+      "detail": "BR"
+    },
+    {
+      "ok": true,
+      "label": "Tab 顺序覆盖 level-button",
+      "detail": "launcher → undo-button → hint-button → swap-button → reverse-button → body → level-button → history → sound-button → pause → help → board → launcher → undo-button → hint-button → swap-button → reverse-button → body → level-button → history → sound-button → pause"
+    },
+    {
+      "ok": true,
+      "label": "Tab 顺序覆盖 history",
+      "detail": "launcher → undo-button → hint-button → swap-button → reverse-button → body → level-button → history → sound-button → pause → help → board → launcher → undo-button → hint-button → swap-button → reverse-button → body → level-button → history → sound-button → pause"
+    },
+    {
+      "ok": true,
+      "label": "Tab 顺序覆盖 sound-button",
+      "detail": "launcher → undo-button → hint-button → swap-button → reverse-button → body → level-button → history → sound-button → pause → help → board → launcher → undo-button → hint-button → swap-button → reverse-button → body → level-button → history → sound-button → pause"
+    },
+    {
+      "ok": true,
+      "label": "Tab 顺序覆盖 pause",
+      "detail": "launcher → undo-button → hint-button → swap-button → reverse-button → body → level-button → history → sound-button → pause → help → board → launcher → undo-button → hint-button → swap-button → reverse-button → body → level-button → history → sound-button → pause"
+    },
+    {
+      "ok": true,
+      "label": "Tab 顺序覆盖 help",
+      "detail": "launcher → undo-button → hint-button → swap-button → reverse-button → body → level-button → history → sound-button → pause → help → board → launcher → undo-button → hint-button → swap-button → reverse-button → body → level-button → history → sound-button → pause"
+    },
+    {
+      "ok": true,
+      "label": "Tab 顺序覆盖 undo-button",
+      "detail": "launcher → undo-button → hint-button → swap-button → reverse-button → body → level-button → history → sound-button → pause → help → board → launcher → undo-button → hint-button → swap-button → reverse-button → body → level-button → history → sound-button → pause"
+    },
+    {
+      "ok": true,
+      "label": "Tab 顺序覆盖 hint-button",
+      "detail": "launcher → undo-button → hint-button → swap-button → reverse-button → body → level-button → history → sound-button → pause → help → board → launcher → undo-button → hint-button → swap-button → reverse-button → body → level-button → history → sound-button → pause"
+    },
+    {
+      "ok": true,
+      "label": "Tab 顺序覆盖 swap-button",
+      "detail": "launcher → undo-button → hint-button → swap-button → reverse-button → body → level-button → history → sound-button → pause → help → board → launcher → undo-button → hint-button → swap-button → reverse-button → body → level-button → history → sound-button → pause"
+    },
+    {
+      "ok": true,
+      "label": "Tab 顺序覆盖 reverse-button",
+      "detail": "launcher → undo-button → hint-button → swap-button → reverse-button → body → level-button → history → sound-button → pause → help → board → launcher → undo-button → hint-button → swap-button → reverse-button → body → level-button → history → sound-button → pause"
+    },
+    {
+      "ok": true,
+      "label": "HINT 徽标可见",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "label": "炸弹邻域消除正确",
+      "detail": "{\"score\":30,\"moves\":1,\"status\":\"playing\",\"track\":\"B\",\"queue\":\"R\",\"history\":1}"
+    },
+    {
+      "ok": true,
+      "label": "LIMIT 达到上限显示失败结算",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "label": "file:// 无控制台/资源错误",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "label": "本地 HTTP 打开成功",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "label": "HTTP 页面资源全部来自本地",
+      "detail": "http://127.0.0.1:39261/web/assets/app.css, http://127.0.0.1:39261/web/assets/engine.js, http://127.0.0.1:39261/web/assets/protocol.js, http://127.0.0.1:39261/web/assets/samples-data.js, http://127.0.0.1:39261/web/assets/audio.js, http://127.0.0.1:39261/web/assets/controller.js, http://127.0.0.1:39261/web/assets/view.js, http://127.0.0.1:39261/web/assets/app.js"
+    },
+    {
+      "ok": true,
+      "label": "HTTP 无控制台/资源错误",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "label": "reduced-motion 媒体查询生效",
+      "detail": ""
+    },
+    {
+      "ok": true,
+      "label": "reduced-motion 下结算在 1.2s 内完成",
+      "detail": "878ms"
+    },
+    {
+      "ok": true,
+      "label": "reduced-motion 无控制台错误",
+      "detail": ""
+    }
+  ],
+  "focusOrder": [
+    "launcher",
+    "undo-button",
+    "hint-button",
+    "swap-button",
+    "reverse-button",
+    "body",
+    "level-button",
+    "history",
+    "sound-button",
+    "pause",
+    "help",
+    "board",
+    "launcher",
+    "undo-button",
+    "hint-button",
+    "swap-button",
+    "reverse-button",
+    "body",
+    "level-button",
+    "history",
+    "sound-button",
+    "pause"
+  ],
+  "screenshots": [
+    "bomb-1232.png",
+    "color-picker-1232.png",
+    "grayscale-1232.png",
+    "help-1232.png",
+    "hint-1232.png",
+    "main-1020.png",
+    "main-1232.png",
+    "main-560.png",
+    "main-760.png",
+    "main-http-1020.png",
+    "reduced-result-760.png",
+    "result-limit-1232.png",
+    "result-lose-1232.png",
+    "result-win-1232.png",
+    "reverse-range-1232.png",
+    "reverse-result-1232.png",
+    "undo-1232.png"
+  ]
+}

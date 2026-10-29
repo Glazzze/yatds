@@ -60,3 +60,92 @@ R R R R
 - **代码质量（20%）**：编写清晰、可维护的代码，并添加适当的注释和文档。
 
 注：以上评分标准同时基于你的报告和实际程序内容进行评估。
+
+## 本项目的实现与运行说明
+
+本项目在 `Project/` 下同时提供两条通道：
+
+- **C++ 命令行通道**：core 规则引擎 + 协议 driver + ANSI 终端渲染，满足 `test`/`inputs`/`outputs` 的逐字节比对要求。
+- **网页通道**：`web/` 下的纯静态页面，独立 JS 引擎复刻同一套规则，用于实际游玩与交互演示。
+
+### 独立提交说明
+
+本目录包含完整 C++ 源码，撤销栈在 `src/core/linked_stack.hpp` 中实现，无需父目录、Baseline 或其他课程源码。C++ 需要 C++17 编译器与 Make，测试工具支持 macOS/Linux；网页直接打开即可，Node ≥ 18 仅用于网页自动化测试，Playwright 仅用于可选浏览器验收。
+
+提交源码包解压后，进入 `Project/` 执行 `make`，即生成 `zuma` 与 `test`。构建产物与 `node_modules/` 不放入源码包，避免携带其他操作系统的二进制。迁移说明与验证记录见 [docs/standalone.md](docs/standalone.md)。
+
+### 构建与 CLI
+
+```bash
+cd /path/to/Project
+make                 # 生成 ./zuma 与 ./test
+make check           # 遍历 inputs/，逐字节比对 outputs/
+make stacktest       # 项目内链式栈专项测试
+make selftest        # core 算法自测（27 场景）
+make difftest        # core 与独立字符串参考差分（默认 10⁵ 局，固定种子）
+make drivertest      # driver 协议集成测试
+make clean
+```
+
+直接运行：
+
+```bash
+./zuma --ui < inputs/case03.txt     # 终端交互渲染（--ui 强制）
+./zuma --plain < inputs/case03.txt  # 纯协议输出（便于比对）
+NO_COLOR=1 ./zuma < inputs/case03.txt
+```
+
+### 网页版
+
+网页位于 `web/index.html`，**无需构建、无需服务器**：
+
+- 直接双击 `web/index.html`，或用浏览器打开该文件即可（`file://` 直开）；
+- 也可以在 `Project/` 下执行 `python3 -m http.server 8000`，
+  然后访问 `http://localhost:8000/web/`；
+- **远程 / code-server / 容器环境**：`file://` 路径和 `localhost:8000`
+  指向的是你本机而不是远端，需使用平台提供的端口代理地址（code-server
+  通常为 `https://<host>/proxy/8000/web/`，VSCode Remote 则在 Ports
+  面板转发 `8000` 后访问本地转发地址）；
+- 默认载入 `case03`（连锁演示）。页面内可切换 16 个样例、粘贴
+  `COLORS/TRACK/QUEUE/LIMIT` 头部，或用种子生成可复现的随机局面；
+- 支持点击轨道空隙发射、方向键选位、变色球选色、炸弹、交换、提示、
+  倒退、撤销、历史只读回看、暂停/音效/帮助与胜负结算。
+
+网页与 C++ 的双实现一致性由 Node 工具验证（需要 Node ≥ 18）：
+
+```bash
+make web-samples    # inputs/*.txt → web/assets/samples-data.js
+make webrandom      # 头部/终局专项 + 500 局跨语言随机指令
+make scalecheck     # n=100/500/1000，队列2000的耗时与快照规模观测
+make webcheck       # JS 协议 vs ./zuma --plain，逐事件交叉验证
+make webtest        # JS 引擎/协议/控制器单元测试
+make webstatic      # id/脚本顺序/资源引用/语法等静态检查
+make webdom         # 无浏览器环境的 app/view DOM 集成冒烟
+make webverify      # 以上六项
+make browsercheck   # 可选：真实 Chromium 验收（需 Playwright，见下）
+```
+
+真实浏览器验收需要一次性安装可选依赖（产物只在 `node_modules/`，不改
+项目文件）：
+
+```bash
+npm install --no-save playwright
+npx playwright install chromium
+npx playwright install-deps chromium   # 容器/首次运行
+make browsercheck                      # file:// + HTTP、四档宽度、弹窗/焦点、
+                                       # reduced-motion、灰度字母，62 项检查
+```
+
+本轮五项优化、实际验证与规模数据见 [docs/优化验证.md](docs/优化验证.md)。
+
+规则与指令格式的唯一规范见 [docs/PROTOCOL.md](docs/PROTOCOL.md)；网页设计、
+组件与交互规范见 [docs/web-design.md](docs/web-design.md)；测试矩阵、
+真实浏览器验收结果与仍需人工复核的清单见 [docs/web-test.md](docs/web-test.md)。
+
+### 实验报告
+
+完整实验报告见 [实验报告.md](实验报告.md)，包含设计思路与 prompt、数据结构
+选型理由、核心函数原理（插入/消除/连锁/撤销/道具）以及 CLI + 网页双通道
+运行说明。11 张提示词截图已按阶段嵌入 §2.1，覆盖阶段 0–6；阶段 3、4、5a
+的中间过程截图也已补齐。另有 19 张测试与网页运行截图（图 12–30）按主题
+嵌入 §4.2 与 §5.3；全部 30 张图统一存放在 `images/`（`figNN-*.png`）。

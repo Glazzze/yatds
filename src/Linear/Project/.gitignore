@@ -1,0 +1,14 @@
+# 构建产物（make / make selftest / make drivertest / 阶段 4 test）
+/zuma
+/tools/selftest
+/tools/driver_test
+/tools/random_diff
+/tools/linked_stack_test
+/tools/scale_probe
+/test
+
+# 可选浏览器验收依赖（npm install --no-save playwright）
+/node_modules/
+
+# 进程崩溃转储
+core.*

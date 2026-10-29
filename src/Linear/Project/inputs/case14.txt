@@ -1,0 +1,5 @@
+# case14 队列耗尽判负：轨道仍有球且无待发射球
+COLORS RB
+TRACK RB
+QUEUE R
+SHOOT 0

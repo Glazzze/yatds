@@ -1,0 +1,378 @@
+g++ -std=c++17 -Wall -Wextra -Isrc -Isrc/core src/main.cpp src/driver/protocol_io.cpp src/driver/cli_render.cpp src/core/track.cpp src/core/game.cpp -o zuma
+./test
+样例比对：16 个用例（/Users/Yajing/Desktop/数据结构与算法/Project/inputs）
+PASS case01.txt
+PASS case02.txt
+PASS case03.txt
+PASS case04.txt
+PASS case05.txt
+PASS case06.txt
+PASS case07.txt
+PASS case08.txt
+PASS case09.txt
+PASS case10.txt
+PASS case11.txt
+PASS case12.txt
+PASS case13.txt
+PASS case14.txt
+PASS case15.txt
+PASS case16.txt
+
+汇总：PASS 16 / 16
+ALL SAMPLE TESTS PASSED
+g++ -std=c++17 -Wall -Wextra -Isrc -Isrc/core tools/random_diff.cpp src/core/track.cpp src/core/game.cpp -o tools/random_diff
+./tools/random_diff -n 100000
+ALL RANDOM DIFF TESTS PASSED (100000 局，seed=20251020)
+g++ -std=c++17 -Wall -Wextra -Isrc -Isrc/core tools/driver_test.cpp -o tools/driver_test
+./tools/driver_test
+PASS load-win
+PASS shoot-elim
+PASS undo-replay
+PASS chameleon
+PASS chameleon-color
+PASS bomb
+PASS swap
+PASS reverse
+PASS hint
+PASS limit
+PASS invalid
+PASS out-of-range
+PASS eof-quit
+PASS comments
+PASS after-final
+PASS help
+PASS lowercase-cmd
+PASS chameleon-invalid-color
+PASS help-after-final
+PASS ui-render
+PASS ui-chain
+PASS quit-stops-with-history
+PASS quit-stops-immediately
+PASS win-hint-echo
+PASS loaded-win-help
+PASS loaded-lose-help
+PASS bomb-hint-endpoint
+PASS color/no-color-env-plain
+PASS color/--no-color
+PASS color/--color-overrides-NO_COLOR
+PASS color/canonical-purity
+ALL DRIVER TESTS PASSED (27 用例)
+/Users/Yajing/.nvm/versions/node/v22.22.3/bin/node tools/gen_web_samples.js
+生成 web/assets/samples-data.js（16 个样例）
+/Users/Yajing/.nvm/versions/node/v22.22.3/bin/node tools/web_crosscheck.js
+PASS case01.txt（7 tokens）
+PASS case02.txt（7 tokens）
+PASS case03.txt（8 tokens）
+PASS case04.txt（7 tokens）
+PASS case05.txt（9 tokens）
+PASS case06.txt（11 tokens）
+PASS case07.txt（11 tokens）
+PASS case08.txt（7 tokens）
+PASS case09.txt（11 tokens）
+PASS case10.txt（9 tokens）
+PASS case11.txt（9 tokens）
+PASS case12.txt（6 tokens）
+PASS case13.txt（10 tokens）
+PASS case14.txt（7 tokens）
+PASS case15.txt（7 tokens）
+PASS case16.txt（8 tokens）
+
+汇总：PASS 16 / 16
+/Users/Yajing/.nvm/versions/node/v22.22.3/bin/node tools/web_random_crosscheck.js
+PASS 头部边界 12 项、终局专项 5 局、跨语言随机 500 局（每局20步，seed=20261029）
+/Users/Yajing/.nvm/versions/node/v22.22.3/bin/node tools/web_engine_test.js
+PASS 装载 settle 消除初始三连
+PASS 三连消除计分并胜利
+PASS 多级连锁倍率 10 → 20
+PASS 炸弹右侧优先消除至多三球
+PASS 变色球未指定/非法颜色零副作用
+PASS REVERSE 反转区间后拼出四连
+PASS REVERSE 右拼缝单独成三连（随机差分回归）
+PASS LIMIT 达到上限判负
+PASS SWAP 达到 LIMIT 判负且可撤销
+PASS 队列耗尽仍有余球判负
+PASS 提示选择最左最佳插入位
+PASS 发射 / 连锁 / 倒退 / 炸弹撤销还原
+PASS 炸弹 HINT 首尾/单球边界与实际首轮数一致
+PASS 反转两处独立连锁各从第1轮开始
+PASS QUIT 截断、终局 HINT 回显与装载终局 HELP
+PASS 随机对局 0–8 步后全量撤销还原
+PASS Controller 记录回合、连锁峰值与历史快照
+PASS Controller 提示不计步数并附带位置
+PASS 随机局面同种子可复现且装载不触发三连
+PASS 34 轮深连锁计分与 C++ 一致
+PASS 超深连锁分数饱和于 2^53-1
+PASS WIN 后 swap 拒绝且状态不变
+PASS 协议解析拒绝缺失头部
+PASS case09 变色球错误零副作用与最终判负
+PASS 16 个样例均可被 JS 协议执行
+
+汇总：PASS 25 项
+/Users/Yajing/.nvm/versions/node/v22.22.3/bin/node tools/web_static_check.js
+PASS 网页必需文件齐全
+PASS HTML id 唯一（110 个）
+PASS view.js IDS 列表可解析
+PASS view.js IDS 均存在于 HTML
+PASS getElementById 字面量均存在（22 个）
+PASS 脚本加载顺序固定
+PASS 脚本文件均存在
+PASS 样式/图标本地引用均存在
+PASS 页面无外部 CDN/字体/图片
+PASS 未使用 ES module
+PASS 网页脚本不依赖 fetch
+PASS SVG 图标引用已定义（14 个）
+PASS 网页脚本语法通过（7 个）
+PASS app.css 大括号平衡
+PASS HTML 标签配对
+PASS 内嵌样例 16 个（实际 16）
+
+静态检查：PASS 16 项，FAIL 0 项
+/Users/Yajing/.nvm/versions/node/v22.22.3/bin/node tools/web_dom_smoke.js
+PASS 初始装载 case03、默认中点与 1/0 首尾选位
+PASS 发射 / 连锁动画 / 胜利结算
+PASS 结算撤销恢复局面与历史
+PASS 自选局面 / 变色球选色 / 消除
+PASS 历史抽屉 / 只读预览 / 返回当前
+PASS 关卡切换 / REVERSE 区间选择与结算
+PASS 暂停 / 音效开关 / 帮助弹窗
+PASS SWAP / HINT / 撤销按钮链路
+PASS LIMIT 失败结算 / 重新开始
+PASS 随机局面生成器预览与载入
+
+DOM 冒烟：全部通过
+
+# core 与新栈专项（此前完整验收）：
+g++ -std=c++17 -Wall -Wextra -Isrc -Isrc/core src/main.cpp src/driver/protocol_io.cpp src/driver/cli_render.cpp src/core/track.cpp src/core/game.cpp -o zuma
+./test
+样例比对：16 个用例（/Users/Yajing/Desktop/数据结构与算法/Project/inputs）
+PASS case01.txt
+PASS case02.txt
+PASS case03.txt
+PASS case04.txt
+PASS case05.txt
+PASS case06.txt
+PASS case07.txt
+PASS case08.txt
+PASS case09.txt
+PASS case10.txt
+PASS case11.txt
+PASS case12.txt
+PASS case13.txt
+PASS case14.txt
+PASS case15.txt
+PASS case16.txt
+
+汇总：PASS 16 / 16
+ALL SAMPLE TESTS PASSED
+./tools/linked_stack_test
+ALL LINKED STACK TESTS PASSED
+g++ -std=c++17 -Wall -Wextra -Isrc -Isrc/core tools/core_selftest.cpp src/core/track.cpp src/core/game.cpp -o tools/selftest
+./tools/selftest
+PASS  load-settle            
+PASS  shoot-single           
+PASS  chain                  
+PASS  no-elim                
+PASS  undo-chain             
+PASS  undo-empty             
+PASS  bomb                   
+PASS  bomb-edge              
+PASS  chameleon              
+PASS  chameleon-no-color     
+PASS  swap                   
+PASS  reverse                
+PASS  reverse-right-seam     
+PASS  hint                   
+PASS  bomb-hint-endpoints    
+PASS  reverse-independent    
+PASS  lose-undo              
+PASS  limit                  
+PASS  invalid-shoot          
+PASS  deep-chain             
+PASS  undo-twice             
+PASS  undo-chameleon         
+PASS  undo-bomb              
+PASS  swap-limit             
+PASS  deep-chain-34          
+PASS  score-saturation       
+PASS  swap-after-win         
+ALL CORE TESTS PASSED (27 场景)
+g++ -std=c++17 -Wall -Wextra -Isrc -Isrc/core tools/random_diff.cpp src/core/track.cpp src/core/game.cpp -o tools/random_diff
+./tools/random_diff -n 100000
+ALL RANDOM DIFF TESTS PASSED (100000 局，seed=20251020)
+g++ -std=c++17 -Wall -Wextra -Isrc -Isrc/core tools/driver_test.cpp -o tools/driver_test
+./tools/driver_test
+PASS load-win
+PASS shoot-elim
+PASS undo-replay
+PASS chameleon
+PASS chameleon-color
+PASS bomb
+PASS swap
+PASS reverse
+PASS hint
+PASS limit
+PASS invalid
+PASS out-of-range
+PASS eof-quit
+PASS comments
+PASS after-final
+PASS help
+PASS lowercase-cmd
+PASS chameleon-invalid-color
+PASS help-after-final
+PASS ui-render
+PASS ui-chain
+PASS quit-stops-with-history
+PASS quit-stops-immediately
+PASS win-hint-echo
+PASS loaded-win-help
+PASS loaded-lose-help
+PASS bomb-hint-endpoint
+PASS color/no-color-env-plain
+PASS color/--no-color
+PASS color/--color-overrides-NO_COLOR
+PASS color/canonical-purity
+ALL DRIVER TESTS PASSED (27 用例)
+/Users/Yajing/.nvm/versions/node/v22.22.3/bin/node tools/gen_web_samples.js
+生成 web/assets/samples-data.js（16 个样例）
+/Users/Yajing/.nvm/versions/node/v22.22.3/bin/node tools/web_crosscheck.js
+PASS case01.txt（7 tokens）
+PASS case02.txt（7 tokens）
+PASS case03.txt（8 tokens）
+PASS case04.txt（7 tokens）
+PASS case05.txt（9 tokens）
+PASS case06.txt（11 tokens）
+PASS case07.txt（11 tokens）
+PASS case08.txt（7 tokens）
+PASS case09.txt（11 tokens）
+PASS case10.txt（9 tokens）
+PASS case11.txt（9 tokens）
+PASS case12.txt（6 tokens）
+PASS case13.txt（10 tokens）
+PASS case14.txt（7 tokens）
+PASS case15.txt（7 tokens）
+PASS case16.txt（8 tokens）
+
+汇总：PASS 16 / 16
+/Users/Yajing/.nvm/versions/node/v22.22.3/bin/node tools/web_random_crosscheck.js
+PASS 头部边界 12 项、终局专项 5 局、跨语言随机 500 局（每局20步，seed=20261029）
+/Users/Yajing/.nvm/versions/node/v22.22.3/bin/node tools/web_engine_test.js
+PASS 装载 settle 消除初始三连
+PASS 三连消除计分并胜利
+PASS 多级连锁倍率 10 → 20
+PASS 炸弹右侧优先消除至多三球
+PASS 变色球未指定/非法颜色零副作用
+PASS REVERSE 反转区间后拼出四连
+PASS REVERSE 右拼缝单独成三连（随机差分回归）
+PASS LIMIT 达到上限判负
+PASS SWAP 达到 LIMIT 判负且可撤销
+PASS 队列耗尽仍有余球判负
+PASS 提示选择最左最佳插入位
+PASS 发射 / 连锁 / 倒退 / 炸弹撤销还原
+PASS 炸弹 HINT 首尾/单球边界与实际首轮数一致
+PASS 反转两处独立连锁各从第1轮开始
+PASS QUIT 截断、终局 HINT 回显与装载终局 HELP
+PASS 随机对局 0–8 步后全量撤销还原
+PASS Controller 记录回合、连锁峰值与历史快照
+PASS Controller 提示不计步数并附带位置
+PASS 随机局面同种子可复现且装载不触发三连
+PASS 34 轮深连锁计分与 C++ 一致
+PASS 超深连锁分数饱和于 2^53-1
+PASS WIN 后 swap 拒绝且状态不变
+PASS 协议解析拒绝缺失头部
+PASS case09 变色球错误零副作用与最终判负
+PASS 16 个样例均可被 JS 协议执行
+
+汇总：PASS 25 项
+/Users/Yajing/.nvm/versions/node/v22.22.3/bin/node tools/web_static_check.js
+PASS 网页必需文件齐全
+PASS HTML id 唯一（110 个）
+PASS view.js IDS 列表可解析
+PASS view.js IDS 均存在于 HTML
+PASS getElementById 字面量均存在（22 个）
+PASS 脚本加载顺序固定
+PASS 脚本文件均存在
+PASS 样式/图标本地引用均存在
+PASS 页面无外部 CDN/字体/图片
+PASS 未使用 ES module
+PASS 网页脚本不依赖 fetch
+PASS SVG 图标引用已定义（14 个）
+PASS 网页脚本语法通过（7 个）
+PASS app.css 大括号平衡
+PASS HTML 标签配对
+PASS 内嵌样例 16 个（实际 16）
+
+静态检查：PASS 16 项，FAIL 0 项
+/Users/Yajing/.nvm/versions/node/v22.22.3/bin/node tools/web_dom_smoke.js
+PASS 初始装载 case03、默认中点与 1/0 首尾选位
+PASS 发射 / 连锁动画 / 胜利结算
+PASS 结算撤销恢复局面与历史
+PASS 自选局面 / 变色球选色 / 消除
+PASS 历史抽屉 / 只读预览 / 返回当前
+PASS 关卡切换 / REVERSE 区间选择与结算
+PASS 暂停 / 音效开关 / 帮助弹窗
+PASS SWAP / HINT / 撤销按钮链路
+PASS LIMIT 失败结算 / 重新开始
+PASS 随机局面生成器预览与载入
+
+DOM 冒烟：全部通过
+
+# QUIT核心API追加回归：
+g++ -std=c++17 -Wall -Wextra -Isrc -Isrc/core tools/core_selftest.cpp src/core/track.cpp src/core/game.cpp -o tools/selftest
+./tools/selftest
+PASS  load-settle            
+PASS  shoot-single           
+PASS  chain                  
+PASS  no-elim                
+PASS  undo-chain             
+PASS  undo-empty             
+PASS  bomb                   
+PASS  bomb-edge              
+PASS  chameleon              
+PASS  chameleon-no-color     
+PASS  swap                   
+PASS  reverse                
+PASS  reverse-right-seam     
+PASS  hint                   
+PASS  bomb-hint-endpoints    
+PASS  reverse-independent    
+PASS  lose-undo              
+PASS  limit                  
+PASS  invalid-shoot          
+PASS  deep-chain             
+PASS  undo-twice             
+PASS  undo-chameleon         
+PASS  undo-bomb              
+PASS  swap-limit             
+PASS  deep-chain-34          
+PASS  score-saturation       
+PASS  swap-after-win         
+ALL CORE TESTS PASSED (27 场景)
+/Users/Yajing/.nvm/versions/node/v22.22.3/bin/node tools/web_engine_test.js
+PASS 装载 settle 消除初始三连
+PASS 三连消除计分并胜利
+PASS 多级连锁倍率 10 → 20
+PASS 炸弹右侧优先消除至多三球
+PASS 变色球未指定/非法颜色零副作用
+PASS REVERSE 反转区间后拼出四连
+PASS REVERSE 右拼缝单独成三连（随机差分回归）
+PASS LIMIT 达到上限判负
+PASS SWAP 达到 LIMIT 判负且可撤销
+PASS 队列耗尽仍有余球判负
+PASS 提示选择最左最佳插入位
+PASS 发射 / 连锁 / 倒退 / 炸弹撤销还原
+PASS 炸弹 HINT 首尾/单球边界与实际首轮数一致
+PASS 反转两处独立连锁各从第1轮开始
+PASS QUIT 截断、终局 HINT 回显与装载终局 HELP
+PASS 随机对局 0–8 步后全量撤销还原
+PASS Controller 记录回合、连锁峰值与历史快照
+PASS Controller 提示不计步数并附带位置
+PASS 随机局面同种子可复现且装载不触发三连
+PASS 34 轮深连锁计分与 C++ 一致
+PASS 超深连锁分数饱和于 2^53-1
+PASS WIN 后 swap 拒绝且状态不变
+PASS 协议解析拒绝缺失头部
+PASS case09 变色球错误零副作用与最终判负
+PASS 16 个样例均可被 JS 协议执行
+
+汇总：PASS 25 项

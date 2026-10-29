@@ -1,0 +1,9 @@
+COLORS RB
+TRACK RR
+QUEUE R
+READY
+SHOOT 2
+ELIM round=1 left=0 count=3 balls=RRR score=+30
+TRACK 
+QUEUE 
+WIN SCORE=30 MOVES=1

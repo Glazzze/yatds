@@ -1,0 +1,6 @@
+# case01 普通插入（中间位置，不触发消除）
+COLORS RGBY
+TRACK RBG
+QUEUE YR
+SHOOT 2
+QUIT

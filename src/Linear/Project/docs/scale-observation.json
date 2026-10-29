@@ -1,0 +1,85 @@
+{
+  "date": "2026-10-29",
+  "environment": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "node": "v22.22.3"
+  },
+  "method": "C++ 默认 Makefile 无优化构建；JS 为 Node。HINT 10次均值，其余单次；不计编译、进程启动和 DOM 动画。JS shoot/undo 包含 Controller 历史快照。JSON字节仅为序列化量，不是堆占用；不设耗时通过阈值。",
+  "cpp": [
+    {
+      "n": 100,
+      "queue": 2000,
+      "rounds": 25,
+      "hintMeanMs": 0.8158,
+      "reverseMs": 0.0061,
+      "shootMs": 0.1198,
+      "undoMs": 0.0245,
+      "eventSnapshotChars": 1250,
+      "removedChars": 99
+    },
+    {
+      "n": 500,
+      "queue": 2000,
+      "rounds": 125,
+      "hintMeanMs": 12.7638,
+      "reverseMs": 0.0263,
+      "shootMs": 0.6841,
+      "undoMs": 0.109,
+      "eventSnapshotChars": 31250,
+      "removedChars": 499
+    },
+    {
+      "n": 1000,
+      "queue": 2000,
+      "rounds": 250,
+      "hintMeanMs": 45.3952,
+      "reverseMs": 0.0107,
+      "shootMs": 1.4599,
+      "undoMs": 0.2617,
+      "eventSnapshotChars": 125000,
+      "removedChars": 999
+    }
+  ],
+  "js": [
+    {
+      "n": 100,
+      "queue": 2000,
+      "rounds": 25,
+      "hintMeanMs": 0.1600792000000002,
+      "reverseMs": 0.3874999999999993,
+      "shootMs": 1.3612499999999983,
+      "undoMs": 0.6679579999999987,
+      "eventSnapshotChars": 1250,
+      "eventSnapshotNodes": 1250,
+      "historyEntries": 2,
+      "historyJsonBytes": 227826
+    },
+    {
+      "n": 500,
+      "queue": 2000,
+      "rounds": 125,
+      "hintMeanMs": 0.7920084000000003,
+      "reverseMs": 0.16841600000000057,
+      "shootMs": 4.982417000000005,
+      "undoMs": 0.5628330000000048,
+      "eventSnapshotChars": 31250,
+      "eventSnapshotNodes": 31250,
+      "historyEntries": 2,
+      "historyJsonBytes": 981737
+    },
+    {
+      "n": 1000,
+      "queue": 2000,
+      "rounds": 250,
+      "hintMeanMs": 2.8147334,
+      "reverseMs": 0.1474580000000003,
+      "shootMs": 10.193917000000013,
+      "undoMs": 0.7902090000000044,
+      "eventSnapshotChars": 125000,
+      "eventSnapshotNodes": 125000,
+      "historyEntries": 2,
+      "historyJsonBytes": 3273108
+    }
+  ]
+}

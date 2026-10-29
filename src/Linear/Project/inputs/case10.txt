@@ -1,0 +1,8 @@
+# case10 SWAP：交换队首两球后发射消除；剩余不足两球时报错
+COLORS RB
+TRACK RRB
+QUEUE BR
+SWAP
+SHOOT 2
+SWAP
+QUIT

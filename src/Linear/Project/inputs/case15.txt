@@ -1,0 +1,5 @@
+# case15 胜利终局：最后一球补齐三连，轨道清空
+COLORS RB
+TRACK RR
+QUEUE R
+SHOOT 2

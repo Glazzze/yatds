@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>祖玛 · 彩球消除</title>
+  <meta name="description" content="祖玛游戏网页版：点击轨道空隙发射彩球，三连消除、连锁、炸弹、变色、撤销与历史回看。">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23EAF5FA'/%3E%3Ccircle cx='26' cy='32' r='9' fill='%23E8756B'/%3E%3Ccircle cx='42' cy='24' r='7' fill='%2376C293'/%3E%3Ccircle cx='43' cy='42' r='7' fill='%2368A5DC'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+  <svg class="svg-sprite" aria-hidden="true" focusable="false">
+    <defs>
+      <symbol id="i-logo" viewBox="0 0 24 24"><circle cx="8" cy="12" r="4.2"/><circle cx="16" cy="8" r="3.4"/><circle cx="16.5" cy="16" r="3.4"/></symbol>
+      <symbol id="i-history" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.3-5.6"/><path d="M4 4v4.5h4.5"/><path d="M12 8v4l2.8 1.7"/></symbol>
+      <symbol id="i-sound" viewBox="0 0 24 24"><path d="M5 10v4h3l4 3.2V6.8L8 10H5Z"/><path d="M16 9.3a4 4 0 0 1 0 5.4"/><path d="M18.5 7a7 7 0 0 1 0 10"/></symbol>
+      <symbol id="i-mute" viewBox="0 0 24 24"><path d="M5 10v4h3l4 3.2V6.8L8 10H5Z"/><path d="m16 10 4 4M20 10l-4 4"/></symbol>
+      <symbol id="i-pause" viewBox="0 0 24 24"><path d="M9 6v12M15 6v12"/></symbol>
+      <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.3a2.5 2.5 0 0 1 4.9.7c0 1.7-2.5 2-2.5 3.6"/><path d="M12 17h.01"/></symbol>
+      <symbol id="i-undo" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.3-5.6"/><path d="M4 4v4.5h4.5"/></symbol>
+      <symbol id="i-hint" viewBox="0 0 24 24"><path d="m12 3 1.7 4.6L18 9.3l-4.3 1.7L12 15.6l-1.7-4.6L6 9.3l4.3-1.7L12 3Z"/><path d="m18.5 15 .8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8.8-2.2Z"/></symbol>
+      <symbol id="i-swap" viewBox="0 0 24 24"><path d="M4 8h13l-3-3M20 16H7l3 3"/></symbol>
+      <symbol id="i-reverse" viewBox="0 0 24 24"><path d="M4 9h11a4 4 0 0 1 0 8H9"/><path d="m7 6-3 3 3 3M12 14l-3 3 3 3"/></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+      <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></symbol>
+      <symbol id="i-restart" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4.5h4.5"/><path d="M12 8v4.5l3 1.6"/></symbol>
+      <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 6.5 18 12 8 17.5v-11Z"/></symbol>
+      <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></symbol>
+    </defs>
+  </svg>
+
+  <div class="page-decor" aria-hidden="true">
+    <span class="decor decor-circle"></span>
+    <span class="decor decor-square"></span>
+    <span class="decor decor-dots"></span>
+  </div>
+
+  <div class="app" id="app">
+    <header class="hud">
+      <div class="brand">
+        <span class="brand-mark"><svg class="icon"><use href="#i-logo"/></svg></span>
+        <div class="brand-text">
+          <h1>祖玛 · 彩球</h1>
+          <p>轻松消除，凑齐三颗同色</p>
+        </div>
+      </div>
+
+      <button class="level-chip" id="level-button" type="button" aria-haspopup="dialog">
+        <span class="level-eyebrow">关卡</span>
+        <span class="level-name" id="level-label">03 · 连锁演示</span>
+        <svg class="icon icon-sm"><use href="#i-chevron"/></svg>
+      </button>
+
+      <div class="score-panel" aria-live="polite">
+        <span class="panel-label">分数</span>
+        <strong id="score-value">0</strong>
+        <span class="score-delta" id="score-delta"></span>
+      </div>
+
+      <div class="progress-panel">
+        <div class="progress-top">
+          <span class="panel-label">进度</span>
+          <span id="progress-text">已消除 0 / 0</span>
+        </div>
+        <div class="progress-bar" role="progressbar" aria-label="关卡进度"
+             aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <div class="progress-meta">
+          <span id="moves-text">步数 0</span>
+          <span id="chain-text"></span>
+        </div>
+      </div>
+
+      <div class="hud-actions">
+        <button class="icon-btn" type="button" data-action="history" title="操作历史 (V)" aria-label="操作历史">
+          <svg class="icon"><use href="#i-history"/></svg>
+        </button>
+        <button class="icon-btn" type="button" data-action="sound" id="sound-button" title="音效 (M)" aria-label="开启音效">
+          <svg class="icon"><use href="#i-mute"/></svg>
+        </button>
+        <button class="icon-btn" type="button" data-action="pause" title="暂停 (P)" aria-label="暂停">
+          <svg class="icon"><use href="#i-pause"/></svg>
+        </button>
+        <button class="icon-btn" type="button" data-action="help" title="帮助 (?)" aria-label="帮助">
+          <svg class="icon"><use href="#i-help"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="board" id="board">
+      <div class="board-glow" aria-hidden="true"></div>
+
+      <section class="track-zone" aria-label="彩球轨道">
+        <div class="track-shell" id="track-shell">
+          <div class="track-world" id="track-world">
+            <svg class="track-groove" id="track-svg" aria-hidden="true">
+              <path id="track-path" d=""></path>
+              <path id="track-path-inner" d=""></path>
+            </svg>
+            <div class="track-balls" id="track-balls"></div>
+            <div class="track-slots" id="track-slots"></div>
+            <div class="ghost-ball" id="ghost-ball" hidden></div>
+            <div class="particle-layer" id="particle-layer" aria-hidden="true"></div>
+          </div>
+        </div>
+        <div class="position-ruler" id="position-ruler" aria-hidden="true"></div>
+        <div class="track-empty" id="track-empty" hidden>轨道已清空</div>
+        <div class="hint-badge" id="hint-badge" hidden><svg class="icon icon-sm"><use href="#i-hint"/></svg>推荐</div>
+        <div class="range-bar" id="range-bar" hidden>
+          <span id="range-text">反转 [0, 0]</span>
+          <button class="mini-btn mini-btn--primary" type="button" id="range-confirm">确认反转</button>
+          <button class="mini-btn" type="button" id="range-cancel">取消</button>
+        </div>
+      </section>
+
+      <div class="aim-line" id="aim-line" hidden aria-hidden="true"></div>
+
+      <section class="launcher-zone" aria-label="发射器与待发射队列">
+        <div class="launcher" id="launcher" role="button" tabindex="0" aria-label="发射器，查看队首球">
+          <span class="launcher-fin launcher-fin--left"></span>
+          <span class="launcher-fin launcher-fin--right"></span>
+          <div class="launcher-socket" id="launcher-socket"></div>
+          <span class="launcher-dot launcher-dot--left"></span>
+          <span class="launcher-dot launcher-dot--right"></span>
+        </div>
+        <div class="queue-area">
+          <div class="queue-head">
+            <span class="queue-label">待发射</span>
+            <span class="queue-count" id="queue-count">0</span>
+          </div>
+          <div class="queue-tray" id="queue-tray"></div>
+        </div>
+      </section>
+
+      <footer class="board-footer">
+        <div class="controls" aria-label="道具">
+          <button class="control" type="button" data-action="undo" id="undo-button" title="撤销 (U)">
+            <svg class="icon"><use href="#i-undo"/></svg><span>撤销</span><kbd>U</kbd>
+          </button>
+          <button class="control" type="button" data-action="hint" id="hint-button" title="提示 (H)">
+            <svg class="icon"><use href="#i-hint"/></svg><span>提示</span><kbd>H</kbd>
+          </button>
+          <button class="control" type="button" data-action="swap" id="swap-button" title="交换 (S)">
+            <svg class="icon"><use href="#i-swap"/></svg><span>交换</span><kbd>S</kbd>
+          </button>
+          <button class="control" type="button" data-action="reverse" id="reverse-button" title="倒退 (R)">
+            <svg class="icon"><use href="#i-reverse"/></svg><span>倒退</span><kbd>R</kbd>
+          </button>
+        </div>
+        <div class="board-stats">
+          <span class="stat-chip" id="track-count">轨道 0</span>
+          <span class="stat-chip" id="queue-remaining">队列 0</span>
+          <span class="stat-chip stat-chip--limit" id="limit-chip" hidden>上限 0</span>
+        </div>
+      </footer>
+
+      <div class="preview-banner" id="preview-banner" hidden>
+        <span><svg class="icon icon-sm"><use href="#i-history"/></svg><span id="preview-text">历史局面</span></span>
+        <button class="mini-btn" type="button" id="preview-return">返回当前</button>
+      </div>
+    </main>
+
+    <p class="page-foot">
+      点击轨道空隙发射 · <kbd>空格</kbd> 发射 · <kbd>H</kbd> 提示 ·
+      撤销后可重来，所有消除都有迹可循
+    </p>
+  </div>
+
+  <aside class="drawer" id="history-drawer" aria-hidden="true" aria-label="操作历史">
+    <header class="drawer-head">
+      <div>
+        <h2>操作历史</h2>
+        <p>点击任一步只读回看当时局面</p>
+      </div>
+      <button class="icon-btn" type="button" id="history-close" aria-label="关闭历史">
+        <svg class="icon"><use href="#i-close"/></svg>
+      </button>
+    </header>
+    <ol class="history-list" id="history-list"></ol>
+    <p class="drawer-note">撤销会作为新的一步记录；历史预览不改变当前对局。</p>
+  </aside>
+  <div class="drawer-scrim" id="drawer-scrim" hidden></div>
+
+  <div class="toast-stack" id="toasts" aria-live="polite"></div>
+  <div class="sr-only" id="live" aria-live="polite"></div>
+
+  <div class="color-popover" id="color-popover" hidden role="dialog" aria-label="选择变色球颜色">
+    <p>选择变色球颜色</p>
+    <div class="swatches" id="color-swatches"></div>
+    <span class="color-hint">数字键 1–8 · Esc 取消</span>
+  </div>
+
+  <div class="modal-layer" id="level-modal" hidden>
+    <div class="modal-card modal-card--wide" role="dialog" aria-modal="true" aria-labelledby="level-title">
+      <header class="modal-head">
+        <div><h2 id="level-title">选择关卡</h2><p>16 个样例覆盖基础操作与全部道具</p></div>
+        <button class="icon-btn modal-close" type="button" data-close="level-modal" aria-label="关闭">
+          <svg class="icon"><use href="#i-close"/></svg>
+        </button>
+      </header>
+      <div class="level-grid" id="level-grid"></div>
+      <footer class="modal-foot">
+        <button class="mini-btn" type="button" data-open="custom-modal">粘贴自选局面</button>
+        <button class="mini-btn" type="button" data-open="random-modal">随机构造</button>
+      </footer>
+    </div>
+  </div>
+
+  <div class="modal-layer" id="custom-modal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="custom-title">
+      <header class="modal-head">
+        <div><h2 id="custom-title">自选局面</h2><p>只读取 COLORS / TRACK / QUEUE（可选 LIMIT）头部</p></div>
+        <button class="icon-btn modal-close" type="button" data-close="custom-modal" aria-label="关闭">
+          <svg class="icon"><use href="#i-close"/></svg>
+        </button>
+      </header>
+      <label class="field-label" for="custom-text">粘贴样例或头部文本</label>
+      <textarea id="custom-text" class="text-area" spellcheck="false"
+        placeholder="COLORS RGBY&#10;TRACK RRBBRR&#10;QUEUE BRB&#10;LIMIT 12"></textarea>
+      <p class="field-error" id="custom-error" role="alert" hidden></p>
+      <p class="field-note">后续指令行会被忽略，只装载局面；LIMIT 留空表示不限步数。</p>
+      <footer class="modal-foot">
+        <button class="mini-btn" type="button" data-close="custom-modal">取消</button>
+        <button class="mini-btn mini-btn--primary" type="button" id="custom-load">载入局面</button>
+      </footer>
+    </div>
+  </div>
+
+  <div class="modal-layer" id="random-modal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="random-title">
+      <header class="modal-head">
+        <div><h2 id="random-title">随机局面</h2><p>同一种子必定生成同一局面，可复制回 C++ 测试</p></div>
+        <button class="icon-btn modal-close" type="button" data-close="random-modal" aria-label="关闭">
+          <svg class="icon"><use href="#i-close"/></svg>
+        </button>
+      </header>
+      <div class="random-grid">
+        <label>颜色数<input id="random-colors" type="number" min="2" max="6" value="4"></label>
+        <label>轨道长度<input id="random-track" type="number" min="3" max="30" value="14"></label>
+        <label>队列长度<input id="random-queue" type="number" min="5" max="30" value="14"></label>
+        <label>特殊球比例<input id="random-special" type="number" min="0" max="20" value="12"> <span>%</span></label>
+        <label>步数上限<input id="random-limit" type="number" min="0" max="999" value="0" placeholder="0 = 不限"></label>
+        <label>种子<input id="random-seed" type="text" value=""></label>
+      </div>
+      <div class="random-preview" id="random-preview"></div>
+      <footer class="modal-foot">
+        <button class="mini-btn" type="button" id="random-again">换一个</button>
+        <button class="mini-btn" type="button" id="random-copy">复制输入</button>
+        <button class="mini-btn mini-btn--primary" type="button" id="random-load">载入</button>
+      </footer>
+    </div>
+  </div>
+
+  <div class="modal-layer" id="pause-modal" hidden>
+    <div class="modal-card modal-card--narrow" role="dialog" aria-modal="true" aria-labelledby="pause-title">
+      <header class="modal-head">
+        <div><h2 id="pause-title">已暂停</h2><p>局面会保留，随时可以继续</p></div>
+      </header>
+      <div class="pause-actions">
+        <button class="mini-btn mini-btn--primary" type="button" id="pause-resume">
+          <svg class="icon icon-sm"><use href="#i-play"/></svg>继续游戏
+        </button>
+        <button class="mini-btn" type="button" id="pause-restart">
+          <svg class="icon icon-sm"><use href="#i-restart"/></svg>重新开始
+        </button>
+        <button class="mini-btn" type="button" id="pause-levels">选择关卡</button>
+        <button class="mini-btn" type="button" id="pause-sound">音效：关</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-layer" id="result-modal" hidden>
+    <div class="modal-card modal-card--result" role="dialog" aria-modal="true" aria-labelledby="result-title">
+      <div class="result-emblem" id="result-emblem" aria-hidden="true"></div>
+      <h2 id="result-title">轨道清空！</h2>
+      <p id="result-sub">彩球全部消除，漂亮的一局。</p>
+      <div class="result-stats">
+        <div><span>分数</span><strong id="result-score">0</strong></div>
+        <div><span>步数</span><strong id="result-moves">0</strong></div>
+        <div><span>最高连锁</span><strong id="result-chain">×1</strong></div>
+        <div><span>消除球数</span><strong id="result-cleared">0</strong></div>
+      </div>
+      <footer class="modal-foot modal-foot--center">
+        <button class="mini-btn" type="button" id="result-undo">撤销最后一步</button>
+        <button class="mini-btn mini-btn--primary" type="button" id="result-restart">再玩一次</button>
+        <button class="mini-btn" type="button" id="result-levels">选择关卡</button>
+      </footer>
+    </div>
+  </div>
+
+  <div class="modal-layer" id="help-modal" hidden>
+    <div class="modal-card modal-card--wide" role="dialog" aria-modal="true" aria-labelledby="help-title">
+      <header class="modal-head">
+        <div><h2 id="help-title">怎么玩</h2><p>规则与 C++ 命令行版本完全一致</p></div>
+        <button class="icon-btn modal-close" type="button" data-close="help-modal" aria-label="关闭">
+          <svg class="icon"><use href="#i-close"/></svg>
+        </button>
+      </header>
+      <div class="help-grid">
+        <section>
+          <h3>基本规则</h3>
+          <p>从待发射队列取最左的球，插入轨道任意空隙。连续 <strong>3 颗及以上</strong>同色球会消除，拼缝再次形成三连时继续连锁，连锁倍率 10 → 20 → 40…。</p>
+          <p>轨道清空即胜利；队列耗尽仍有余球、或步数达到上限即失败。撤销可回退终局。</p>
+        </section>
+        <section>
+          <h3>特殊球与道具</h3>
+          <ul>
+            <li><strong>✦ 炸弹</strong>：消除落点邻域至多 3 球，无视颜色。</li>
+            <li><strong>? 变色</strong>：发射时选择一种已声明颜色。</li>
+            <li><strong>交换</strong>：交换队首两球。 <strong>提示</strong>：高亮最佳插入位。</li>
+            <li><strong>倒退</strong>：反转一段轨道，拼出新的三连。</li>
+          </ul>
+        </section>
+        <section>
+          <h3>键盘</h3>
+          <p><kbd>←</kbd><kbd>→</kbd> 选位 · <kbd>Shift</kbd> 快移 · <kbd>1</kbd>/<kbd>0</kbd> 跳首/尾 · <kbd>空格</kbd>/<kbd>Enter</kbd> 发射</p>
+          <p>调色板打开时 <kbd>1–8</kbd> 选颜色 · <kbd>Esc</kbd> 取消</p>
+          <p><kbd>U</kbd> 撤销 · <kbd>H</kbd> 提示 · <kbd>S</kbd> 交换 · <kbd>R</kbd> 倒退 · <kbd>V</kbd> 历史</p>
+          <p><kbd>M</kbd> 音效 · <kbd>P</kbd> 暂停 · <kbd>Esc</kbd> 取消/返回 · <kbd>?</kbd> 帮助</p>
+        </section>
+        <section>
+          <h3>历史回看</h3>
+          <p>每步操作都会留下局面快照。点击右侧历史中的任意一条即可只读查看当时局面，方便复盘连锁与撤销链。</p>
+        </section>
+      </div>
+      <footer class="modal-foot">
+        <button class="mini-btn mini-btn--primary" type="button" data-close="help-modal">知道了</button>
+      </footer>
+    </div>
+  </div>
+
+  <div class="modal-layer" id="confirm-modal" hidden>
+    <div class="modal-card modal-card--narrow" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+      <h2 id="confirm-title">载入新关卡？</h2>
+      <p id="confirm-text">当前对局将结束，历史与撤销记录会清空。</p>
+      <footer class="modal-foot">
+        <button class="mini-btn" type="button" id="confirm-cancel">取消</button>
+        <button class="mini-btn mini-btn--primary" type="button" id="confirm-ok">载入</button>
+      </footer>
+    </div>
+  </div>
+
+  <script src="assets/engine.js"></script>
+  <script src="assets/protocol.js"></script>
+  <script src="assets/samples-data.js"></script>
+  <script src="assets/audio.js"></script>
+  <script src="assets/controller.js"></script>
+  <script src="assets/view.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>

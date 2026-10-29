@@ -1,0 +1,6 @@
+# case08 炸弹球 *：以炸弹为中心消除 R*G（右侧优先、至多 3 球）
+COLORS RGB
+TRACK RGB
+QUEUE *R
+SHOOT 1
+QUIT

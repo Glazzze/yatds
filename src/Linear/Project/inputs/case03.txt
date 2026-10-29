@@ -1,0 +1,5 @@
+# case03 多级连锁（README 示例）：BBB 消除后 RRRR 再消 → 轨道清空
+COLORS RB
+TRACK RRBBRR
+QUEUE B
+SHOOT 4

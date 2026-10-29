@@ -1,0 +1,6 @@
+# case12 REVERSE：反转闭区间 [2,5] 拼出四连消除
+COLORS RB
+TRACK RRBBRR
+QUEUE R
+REVERSE 2 5
+QUIT

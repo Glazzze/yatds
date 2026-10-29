@@ -1,0 +1,8 @@
+# case16 错误输入：越界发射 + 空撤销栈（均不改状态、不计步）
+COLORS RB
+TRACK RB
+QUEUE R
+SHOOT 99
+UNDO
+HINT
+QUIT

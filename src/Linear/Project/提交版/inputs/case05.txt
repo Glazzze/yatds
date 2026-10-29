@@ -1,0 +1,7 @@
+# case05 插入位置边界：先插到 0（左端），再插到末端（p=n）
+COLORS RGB
+TRACK RGB
+QUEUE RGR
+SHOOT 0
+SHOOT 4
+QUIT
