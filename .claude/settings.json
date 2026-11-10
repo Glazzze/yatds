@@ -13,5 +13,18 @@
     "CLAUDE_CODE_SUBAGENT_MODEL": "glm-5.3"
   },
   "model": "opus",
-  "totalTokensReminder": "off"
+  "totalTokensReminder": "off",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR:-/home/yatcc-ds}/.claude/hooks/session-start.sh\"",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
 }
