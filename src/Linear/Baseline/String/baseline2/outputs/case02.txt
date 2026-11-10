@@ -1,0 +1,8 @@
+0 0 0 0
+0 0 0 0
+-1
+-1
+-1
+PERF naive n=9 m=4 time_ms=0.000061
+PERF kmp n=9 m=4 time_ms=0.000118
+PERF kmp_nextval n=9 m=4 time_ms=0.000163
