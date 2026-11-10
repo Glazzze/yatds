@@ -1,0 +1,11 @@
+EMPTY
+0
+Hello
+5
+He
+ERROR
+EMPTY
+0
+PERF my_string n=100000 ops=200000 time_ms=2.371
+PERF std_string n=100000 ops=200000 time_ms=1.150
+PERF my_string_reserve n=100000 ops=200000 time_ms=2.118

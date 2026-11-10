@@ -1,0 +1,13 @@
+aaaaaaaaaa
+11
+FIND aaaa
+FIND aaaaaaaaaa
+APPEND aaaaaaaaaa
+LENGTH
+SUBSTR 5 10
+SUBSTR 19 1
+SUBSTR 20 0
+CLEAR
+APPEND abc
+COMPARE abc
+LENGTH

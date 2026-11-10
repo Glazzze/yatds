@@ -1,0 +1,14 @@
+abc
+def
+ERROR
+
+0
+3
+-1
+0
+-1
+6
+-1
+PERF my_string n=100000 ops=200000 time_ms=2.359
+PERF std_string n=100000 ops=200000 time_ms=1.127
+PERF my_string_reserve n=100000 ops=200000 time_ms=2.120

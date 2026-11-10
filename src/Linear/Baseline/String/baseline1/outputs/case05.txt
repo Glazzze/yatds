@@ -1,0 +1,11 @@
+0
+0
+20
+aaaaaaaaaa
+a
+ERROR
+0
+3
+PERF my_string n=100000 ops=200000 time_ms=2.395
+PERF std_string n=100000 ops=200000 time_ms=1.115
+PERF my_string_reserve n=100000 ops=200000 time_ms=1.773

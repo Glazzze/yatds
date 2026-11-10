@@ -1,0 +1,10 @@
+Hello
+5
+World
+5
+0
+HelloString
+11
+PERF my_string n=100000 ops=200000 time_ms=1.987
+PERF std_string n=100000 ops=200000 time_ms=0.478
+PERF my_string_reserve n=100000 ops=200000 time_ms=0.910

@@ -1,0 +1,14 @@
+abcdef
+12
+SUBSTR 0 3
+SUBSTR 3 100
+SUBSTR 6 0
+SUBSTR 2 0
+FIND abc
+FIND def
+FIND xyz
+FIND abcdef
+FIND z
+LENGTH
+CLEAR
+FIND a

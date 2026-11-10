@@ -1,0 +1,11 @@
+Hello
+9
+PRINT
+LENGTH
+APPEND World
+SUBSTR 5 5
+FIND World
+REPLACE World String
+COMPARE HelloString
+PRINT
+LENGTH
